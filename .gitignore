@@ -1,0 +1,23 @@
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+TestResults/
+coverage/
+*.nupkg
+
+# Rider
+.idea/
+
+# Build output
+artifacts/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Docker volumes and local data
+docker-data/
