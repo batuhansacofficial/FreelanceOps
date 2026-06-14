@@ -1,0 +1,11 @@
+@FreelanceOps.Api_HostAddress = http://localhost:5244
+
+GET {{FreelanceOps.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+GET {{FreelanceOps.Api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
