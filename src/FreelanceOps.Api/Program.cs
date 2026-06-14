@@ -1,4 +1,7 @@
+using FreelanceOps.Api.Extensions;
 using FreelanceOps.Api.Middleware;
+using FreelanceOps.Api.Services;
+using FreelanceOps.Application.Abstractions.Authentication;
 using FreelanceOps.Application;
 using FreelanceOps.Infrastructure;
 using FreelanceOps.Infrastructure.Persistence;
@@ -8,11 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => options.AddBearerSecurity());
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApiAuthentication(builder.Configuration);
 
 builder.Services
     .AddHealthChecks()
@@ -29,6 +35,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 

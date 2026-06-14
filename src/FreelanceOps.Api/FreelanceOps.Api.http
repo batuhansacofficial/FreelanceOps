@@ -9,3 +9,24 @@ GET {{FreelanceOps.Api_HostAddress}}/openapi/v1.json
 Accept: application/json
 
 ###
+
+POST {{FreelanceOps.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "batuhan@example.com",
+  "password": "Password123!",
+  "fullName": "Batuhan Sac"
+}
+
+###
+
+POST {{FreelanceOps.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "batuhan@example.com",
+  "password": "Password123!"
+}
+
+###
