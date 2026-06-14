@@ -8,6 +8,16 @@ GET /openapi/v1.json
 GET /swagger
 ```
 
+Auth endpoints:
+
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh-token
+POST /api/auth/logout
+GET  /api/auth/me
+```
+
 Business APIs should be workspace-scoped after auth and tenant isolation are implemented:
 
 ```http

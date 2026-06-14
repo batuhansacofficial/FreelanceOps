@@ -11,6 +11,7 @@ Initial solution setup is in place:
 - PostgreSQL EF Core configuration
 - Docker Compose for PostgreSQL and Redis
 - Health check endpoint at `/health`
+- Auth endpoints for register, login, refresh-token rotation, logout, and current user
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
 
@@ -65,10 +66,19 @@ Health check:
 /health
 ```
 
+Auth endpoints:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh-token
+POST /api/auth/logout
+GET  /api/auth/me
+```
+
 ## Known Limitations
 
-- Auth is not implemented yet.
 - Workspace isolation is not implemented yet.
-- No database migrations exist yet because domain entities have not been added.
+- Automated integration tests are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.
