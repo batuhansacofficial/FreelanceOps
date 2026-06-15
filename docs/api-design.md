@@ -18,15 +18,6 @@ POST /api/auth/logout
 GET  /api/auth/me
 ```
 
-Business APIs should be workspace-scoped after auth and tenant isolation are implemented:
-
-```http
-GET /api/workspaces/{workspaceId}/clients
-POST /api/workspaces/{workspaceId}/clients
-GET /api/workspaces/{workspaceId}/projects
-POST /api/workspaces/{workspaceId}/projects
-```
-
 Workspace endpoints:
 
 ```http
@@ -42,3 +33,38 @@ DELETE /api/workspaces/{workspaceId}/members/{memberId}
 ```
 
 Every workspace endpoint requires a valid bearer token. Endpoints with a `workspaceId` route value also check active membership. Member-management endpoints require `Owner` or `Admin`, except workspace deletion, which requires `Owner`.
+
+Client endpoints:
+
+```http
+POST   /api/workspaces/{workspaceId}/clients
+GET    /api/workspaces/{workspaceId}/clients?page=1&pageSize=20&search=acme
+GET    /api/workspaces/{workspaceId}/clients/{clientId}
+PUT    /api/workspaces/{workspaceId}/clients/{clientId}
+DELETE /api/workspaces/{workspaceId}/clients/{clientId}
+```
+
+Client list responses include:
+
+```json
+{
+  "items": [],
+  "page": 1,
+  "pageSize": 20,
+  "totalCount": 0,
+  "totalPages": 0,
+  "hasNextPage": false,
+  "hasPreviousPage": false
+}
+```
+
+Client read endpoints require `Owner`, `Admin`, or `Member`. Client create, update, and delete endpoints require `Owner` or `Admin`.
+
+Every client query filters by `WorkspaceId` and `IsDeleted = false`. Client detail, update, and delete lookups also filter by `ClientId`, so a known client id cannot be read through another workspace route.
+
+Future business APIs should keep the same workspace route shape:
+
+```http
+GET  /api/workspaces/{workspaceId}/projects
+POST /api/workspaces/{workspaceId}/projects
+```

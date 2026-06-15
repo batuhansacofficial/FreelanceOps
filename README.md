@@ -13,6 +13,7 @@ Initial solution setup is in place:
 - Health check endpoint at `/health`
 - Auth endpoints for register, login, refresh-token rotation, logout, and current user
 - Workspace and workspace-member endpoints with role-based access checks
+- Workspace-scoped client CRUD with pagination, search, and soft delete
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
 
@@ -92,10 +93,20 @@ PATCH  /api/workspaces/{workspaceId}/members/{memberId}/role
 DELETE /api/workspaces/{workspaceId}/members/{memberId}
 ```
 
+Client endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/clients
+GET    /api/workspaces/{workspaceId}/clients?page=1&pageSize=20&search=acme
+GET    /api/workspaces/{workspaceId}/clients/{clientId}
+PUT    /api/workspaces/{workspaceId}/clients/{clientId}
+DELETE /api/workspaces/{workspaceId}/clients/{clientId}
+```
+
 ## Known Limitations
 
-- Workspace isolation exists for workspace and member endpoints only; future business entities still need workspace-scoped guards.
-- Client, project, invoice, and report modules are not implemented yet.
+- Workspace isolation exists for workspace, member, and client endpoints; project, invoice, and report modules still need workspace-scoped guards when implemented.
+- Project, invoice, and report modules are not implemented yet.
 - Automated integration tests are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.
