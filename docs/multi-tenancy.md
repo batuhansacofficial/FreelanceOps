@@ -4,11 +4,18 @@ FreelanceOps uses a single database and shared schema. Workspace ownership and m
 
 ## Tenant Boundary
 
-Business data should be scoped by `WorkspaceId`. For this milestone, the workspace module enforces:
+Business data is scoped by `WorkspaceId`. The workspace module enforces:
 
 - Active membership for workspace reads
 - `Owner` or `Admin` role for member-management operations
 - `Owner` role for workspace deletion
+
+The client module enforces:
+
+- Active workspace membership for client list and detail reads
+- `Owner` or `Admin` role for client create, update, and delete
+- `WorkspaceId` and `IsDeleted = false` filters for every client query
+- `WorkspaceId`, `ClientId`, and `IsDeleted = false` filters for client detail, update, and delete lookups
 
 ## Roles
 
@@ -37,4 +44,4 @@ IWorkspaceAccessService.HasAnyRoleAsync(...)
 IWorkspaceAccessService.GetRoleAsync(...)
 ```
 
-Future modules such as clients, projects, invoices, time tracking, and reports must call these services before returning or mutating workspace-scoped data.
+Future modules such as projects, invoices, time tracking, and reports must call these services before returning or mutating workspace-scoped data.

@@ -6,6 +6,7 @@ The first test scope should cover:
 
 - Auth flow
 - Workspace isolation
+- Client authorization and tenant isolation
 - Forbidden cross-workspace access
 - Domain rules for invoices, proposals, and time tracking after those modules exist
 
@@ -43,3 +44,26 @@ The workspace flow has been manually verified against the real PostgreSQL-backed
 - Removing the `Owner` member returns `400`
 - Demoting the `Owner` member returns `400`
 - Unknown workspace id returns `404`
+
+## Manual Client Verification
+
+The client flow has been manually verified against the real PostgreSQL-backed API:
+
+- User A and User B can register and login
+- User A creates a workspace
+- User A creates a client and receives `201`
+- User A lists clients and sees the created client
+- User A reads client detail and receives `200`
+- User B cannot list User A workspace clients before membership and receives `403`
+- User A adds User B as `Member`
+- User B can list clients after membership and receives `200`
+- User B cannot create clients while only `Member` and receives `403`
+- User A promotes User B to `Admin`
+- User B can create a client after becoming `Admin`
+- Client list pagination returns correct page metadata
+- Client list search returns the matching workspace client
+- User A updates a client and receives `204`
+- User A soft-deletes a client and receives `204`
+- Deleted clients are hidden from list responses
+- Deleted client detail returns `404`
+- Looking up a client id through another workspace route returns `404`
