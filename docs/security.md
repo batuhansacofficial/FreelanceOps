@@ -20,8 +20,25 @@ Implemented:
 
 Still pending:
 
-- Workspace membership checks
-- Workspace role checks
-- `403` behavior for workspace-scoped operations
+- Workspace-scoped guards for future clients, projects, invoices, and reports
+- `403` behavior for future business modules
 
 Do not add client, project, task, invoice, or report modules before workspace authorization is reliable.
+
+## Workspace Authorization
+
+Implemented workspace rules:
+
+- Workspace creator becomes `Owner`.
+- Active membership is required for workspace access.
+- `Owner` and `Admin` can add members.
+- `Owner` and `Admin` can change non-owner member roles.
+- `Owner` and `Admin` can remove non-owner members.
+- `Owner` cannot be removed.
+- `Owner` role cannot be assigned through member endpoints.
+- `Owner` role cannot be changed.
+
+Reusable services:
+
+- `IWorkspaceAccessService`
+- `IWorkspaceAuthorizationService`

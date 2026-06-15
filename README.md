@@ -12,6 +12,7 @@ Initial solution setup is in place:
 - Docker Compose for PostgreSQL and Redis
 - Health check endpoint at `/health`
 - Auth endpoints for register, login, refresh-token rotation, logout, and current user
+- Workspace and workspace-member endpoints with role-based access checks
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
 
@@ -76,9 +77,25 @@ POST /api/auth/logout
 GET  /api/auth/me
 ```
 
+Workspace endpoints:
+
+```text
+POST   /api/workspaces
+GET    /api/workspaces
+GET    /api/workspaces/{workspaceId}
+PUT    /api/workspaces/{workspaceId}
+DELETE /api/workspaces/{workspaceId}
+
+GET    /api/workspaces/{workspaceId}/members
+POST   /api/workspaces/{workspaceId}/members
+PATCH  /api/workspaces/{workspaceId}/members/{memberId}/role
+DELETE /api/workspaces/{workspaceId}/members/{memberId}
+```
+
 ## Known Limitations
 
-- Workspace isolation is not implemented yet.
+- Workspace isolation exists for workspace and member endpoints only; future business entities still need workspace-scoped guards.
+- Client, project, invoice, and report modules are not implemented yet.
 - Automated integration tests are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.
