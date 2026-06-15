@@ -30,3 +30,13 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{FreelanceOps.Api_HostAddress}}/api/workspaces
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Batuhan Freelance Studio"
+}
+
+###

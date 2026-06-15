@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FreelanceOps.Api.Extensions;
 using FreelanceOps.Api.Middleware;
 using FreelanceOps.Api.Services;
@@ -8,7 +9,9 @@ using FreelanceOps.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(options => options.AddBearerSecurity());
