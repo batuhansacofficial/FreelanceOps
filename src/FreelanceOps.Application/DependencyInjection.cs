@@ -1,4 +1,9 @@
 using FluentValidation;
+using FreelanceOps.Application.Clients.CreateClient;
+using FreelanceOps.Application.Clients.DeleteClient;
+using FreelanceOps.Application.Clients.GetClientById;
+using FreelanceOps.Application.Clients.GetClients;
+using FreelanceOps.Application.Clients.UpdateClient;
 using FreelanceOps.Application.Identity.GetCurrentUser;
 using FreelanceOps.Application.Identity.Login;
 using FreelanceOps.Application.Identity.Logout;
@@ -41,6 +46,11 @@ public static class DependencyInjection
         services.AddScoped<AddWorkspaceMemberHandler>();
         services.AddScoped<ChangeWorkspaceMemberRoleHandler>();
         services.AddScoped<RemoveWorkspaceMemberHandler>();
+        services.AddScoped<CreateClientHandler>();
+        services.AddScoped<GetClientsHandler>();
+        services.AddScoped<GetClientByIdHandler>();
+        services.AddScoped<UpdateClientHandler>();
+        services.AddScoped<DeleteClientHandler>();
 
         return services;
     }
