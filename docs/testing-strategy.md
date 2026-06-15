@@ -25,3 +25,21 @@ Until integration test infrastructure is added, the auth flow has been manually 
 - Logout revokes the active refresh token
 - Refresh after logout returns `401`
 - Invalid bearer token on `/api/auth/me` returns `401`
+
+## Manual Workspace Verification
+
+The workspace flow has been manually verified against the real PostgreSQL-backed API:
+
+- Missing token on `/api/workspaces` returns `401`
+- User A creates workspace and receives `Owner`
+- User A sees the workspace in `/api/workspaces`
+- User B cannot access User A workspace before membership and receives `403`
+- User A adds User B as `Member`
+- Duplicate active membership returns `409`
+- User B can access the workspace after membership
+- User B cannot add another member while only `Member`
+- User A changes User B role to `Admin`
+- User B can add another registered user after becoming `Admin`
+- Removing the `Owner` member returns `400`
+- Demoting the `Owner` member returns `400`
+- Unknown workspace id returns `404`
