@@ -46,6 +46,22 @@ public sealed class ExceptionHandlingMiddleware(
                 "Unauthorized",
                 exception.Message);
         }
+        catch (ForbiddenException exception) when (!context.Response.HasStarted)
+        {
+            await WriteProblemAsync(
+                context,
+                StatusCodes.Status403Forbidden,
+                "Forbidden",
+                exception.Message);
+        }
+        catch (NotFoundException exception) when (!context.Response.HasStarted)
+        {
+            await WriteProblemAsync(
+                context,
+                StatusCodes.Status404NotFound,
+                "Not found",
+                exception.Message);
+        }
         catch (DomainException exception) when (!context.Response.HasStarted)
         {
             await WriteProblemAsync(

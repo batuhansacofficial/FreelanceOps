@@ -1,7 +1,9 @@
 using FreelanceOps.Application.Abstractions.Authentication;
 using FreelanceOps.Application.Abstractions.Persistence;
+using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Infrastructure.Authentication;
 using FreelanceOps.Infrastructure.Persistence;
+using FreelanceOps.Infrastructure.Workspaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +32,7 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IWorkspaceAccessService, WorkspaceAccessService>();
 
         return services;
     }
