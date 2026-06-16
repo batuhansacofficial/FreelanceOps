@@ -9,6 +9,18 @@ using FreelanceOps.Application.Identity.Login;
 using FreelanceOps.Application.Identity.Logout;
 using FreelanceOps.Application.Identity.RefreshToken;
 using FreelanceOps.Application.Identity.Register;
+using FreelanceOps.Application.Projects.ChangeProjectStatus;
+using FreelanceOps.Application.Projects.CreateProject;
+using FreelanceOps.Application.Projects.DeleteProject;
+using FreelanceOps.Application.Projects.GetProjectById;
+using FreelanceOps.Application.Projects.GetProjects;
+using FreelanceOps.Application.Projects.UpdateProject;
+using FreelanceOps.Application.ProjectTasks.ChangeProjectTaskStatus;
+using FreelanceOps.Application.ProjectTasks.CreateProjectTask;
+using FreelanceOps.Application.ProjectTasks.DeleteProjectTask;
+using FreelanceOps.Application.ProjectTasks.GetProjectTaskById;
+using FreelanceOps.Application.ProjectTasks.GetProjectTasks;
+using FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Workspaces;
 using FreelanceOps.Application.Workspaces.CreateWorkspace;
@@ -51,6 +63,18 @@ public static class DependencyInjection
         services.AddScoped<GetClientByIdHandler>();
         services.AddScoped<UpdateClientHandler>();
         services.AddScoped<DeleteClientHandler>();
+        services.AddScoped<CreateProjectHandler>();
+        services.AddScoped<GetProjectsHandler>();
+        services.AddScoped<GetProjectByIdHandler>();
+        services.AddScoped<UpdateProjectHandler>();
+        services.AddScoped<ChangeProjectStatusHandler>();
+        services.AddScoped<DeleteProjectHandler>();
+        services.AddScoped<CreateProjectTaskHandler>();
+        services.AddScoped<GetProjectTasksHandler>();
+        services.AddScoped<GetProjectTaskByIdHandler>();
+        services.AddScoped<UpdateProjectTaskHandler>();
+        services.AddScoped<ChangeProjectTaskStatusHandler>();
+        services.AddScoped<DeleteProjectTaskHandler>();
 
         return services;
     }
