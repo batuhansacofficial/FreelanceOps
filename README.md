@@ -14,6 +14,7 @@ Initial solution setup is in place:
 - Auth endpoints for register, login, refresh-token rotation, logout, and current user
 - Workspace and workspace-member endpoints with role-based access checks
 - Workspace-scoped client CRUD with pagination, search, and soft delete
+- Workspace-scoped project and task management with status changes, filters, pagination, assignment checks, and soft delete
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
 
@@ -103,10 +104,32 @@ PUT    /api/workspaces/{workspaceId}/clients/{clientId}
 DELETE /api/workspaces/{workspaceId}/clients/{clientId}
 ```
 
+Project endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/projects
+GET    /api/workspaces/{workspaceId}/projects?page=1&pageSize=20&search=api&status=Active&clientId={clientId}
+GET    /api/workspaces/{workspaceId}/projects/{projectId}
+PUT    /api/workspaces/{workspaceId}/projects/{projectId}
+PATCH  /api/workspaces/{workspaceId}/projects/{projectId}/status
+DELETE /api/workspaces/{workspaceId}/projects/{projectId}
+```
+
+Task endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/projects/{projectId}/tasks
+GET    /api/workspaces/{workspaceId}/projects/{projectId}/tasks?page=1&pageSize=20&status=Todo&assignedToUserId={userId}
+GET    /api/workspaces/{workspaceId}/tasks/{taskId}
+PUT    /api/workspaces/{workspaceId}/tasks/{taskId}
+PATCH  /api/workspaces/{workspaceId}/tasks/{taskId}/status
+DELETE /api/workspaces/{workspaceId}/tasks/{taskId}
+```
+
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, and client endpoints; project, invoice, and report modules still need workspace-scoped guards when implemented.
-- Project, invoice, and report modules are not implemented yet.
+- Workspace isolation exists for workspace, member, client, project, and task endpoints; invoice and report modules still need workspace-scoped guards when implemented.
+- Invoice and report modules are not implemented yet.
 - Automated integration tests are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.

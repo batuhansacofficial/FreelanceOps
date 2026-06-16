@@ -17,6 +17,21 @@ The client module enforces:
 - `WorkspaceId` and `IsDeleted = false` filters for every client query
 - `WorkspaceId`, `ClientId`, and `IsDeleted = false` filters for client detail, update, and delete lookups
 
+The project module enforces:
+
+- Active workspace membership for project list and detail reads
+- `Owner` or `Admin` role for project create, update, status change, and delete
+- Same-workspace client validation before project creation
+- `WorkspaceId`, `ProjectId`, and `IsDeleted = false` filters for project detail, update, status change, and delete lookups
+
+The task module enforces:
+
+- Active workspace membership for task list, detail, create, update, and status change
+- `Owner` or `Admin` role for task delete
+- Same-workspace project validation before task creation and task listing
+- Active workspace membership validation for `AssignedToUserId`
+- `WorkspaceId`, `TaskId`, and `IsDeleted = false` filters for task detail, update, status change, and delete lookups
+
 ## Roles
 
 ```text
@@ -44,4 +59,4 @@ IWorkspaceAccessService.HasAnyRoleAsync(...)
 IWorkspaceAccessService.GetRoleAsync(...)
 ```
 
-Future modules such as projects, invoices, time tracking, and reports must call these services before returning or mutating workspace-scoped data.
+Future modules such as invoices, time tracking, and reports must call these services before returning or mutating workspace-scoped data.

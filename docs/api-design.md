@@ -62,9 +62,30 @@ Client read endpoints require `Owner`, `Admin`, or `Member`. Client create, upda
 
 Every client query filters by `WorkspaceId` and `IsDeleted = false`. Client detail, update, and delete lookups also filter by `ClientId`, so a known client id cannot be read through another workspace route.
 
-Future business APIs should keep the same workspace route shape:
+Project endpoints:
 
 ```http
-GET  /api/workspaces/{workspaceId}/projects
-POST /api/workspaces/{workspaceId}/projects
+POST   /api/workspaces/{workspaceId}/projects
+GET    /api/workspaces/{workspaceId}/projects?page=1&pageSize=20&search=api&status=Active&clientId={clientId}
+GET    /api/workspaces/{workspaceId}/projects/{projectId}
+PUT    /api/workspaces/{workspaceId}/projects/{projectId}
+PATCH  /api/workspaces/{workspaceId}/projects/{projectId}/status
+DELETE /api/workspaces/{workspaceId}/projects/{projectId}
 ```
+
+Task endpoints:
+
+```http
+POST   /api/workspaces/{workspaceId}/projects/{projectId}/tasks
+GET    /api/workspaces/{workspaceId}/projects/{projectId}/tasks?page=1&pageSize=20&status=Todo&assignedToUserId={userId}
+GET    /api/workspaces/{workspaceId}/tasks/{taskId}
+PUT    /api/workspaces/{workspaceId}/tasks/{taskId}
+PATCH  /api/workspaces/{workspaceId}/tasks/{taskId}/status
+DELETE /api/workspaces/{workspaceId}/tasks/{taskId}
+```
+
+Project read endpoints require `Owner`, `Admin`, or `Member`. Project create, update, status change, and delete endpoints require `Owner` or `Admin`.
+
+Task read, create, update, and status change endpoints require active workspace membership. Task delete requires `Owner` or `Admin`.
+
+Project creation validates that the selected client belongs to the same workspace and is not deleted. Task creation and update validate that the project belongs to the route workspace and that `assignedToUserId`, when provided, is an active member of the same workspace.

@@ -1,5 +1,6 @@
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Domain.Clients;
+using FreelanceOps.Domain.Projects;
 using FreelanceOps.Domain.Users;
 using FreelanceOps.Domain.Workspaces;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,10 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<WorkspaceMember> WorkspaceMembers => Set<WorkspaceMember>();
 
     public DbSet<Client> Clients => Set<Client>();
+
+    public DbSet<Project> Projects => Set<Project>();
+
+    public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

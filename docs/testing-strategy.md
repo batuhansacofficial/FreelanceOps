@@ -7,6 +7,7 @@ The first test scope should cover:
 - Auth flow
 - Workspace isolation
 - Client authorization and tenant isolation
+- Project and task tenant isolation
 - Forbidden cross-workspace access
 - Domain rules for invoices, proposals, and time tracking after those modules exist
 
@@ -67,3 +68,33 @@ The client flow has been manually verified against the real PostgreSQL-backed AP
 - Deleted clients are hidden from list responses
 - Deleted client detail returns `404`
 - Looking up a client id through another workspace route returns `404`
+
+## Manual Project And Task Verification
+
+The project/task flow has been manually verified against the real PostgreSQL-backed API:
+
+- User A and User B can register and login
+- User A creates a workspace and client
+- User A creates a project and receives `201`
+- Project list includes the created project
+- Project search, status filter, client filter, and pagination return correct metadata/results
+- User B cannot list projects before membership and receives `403`
+- User A adds User B as `Member`
+- User B can list projects after membership
+- User B cannot create projects while only `Member`
+- User A creates a task assigned to User B
+- User B can create a task as a workspace member
+- User B can change task status
+- User B cannot change project status
+- User A can change project status
+- Task list status and assignee filters return the expected task
+- User B can read task detail and update task fields
+- User B cannot delete a task
+- User A can delete a task
+- Deleted task detail returns `404`
+- User A can update a project
+- Project creation with a client from another workspace returns `404`
+- Task creation with a project id from another workspace returns `404`
+- User A can delete a project
+- Deleted project detail returns `404`
+- Task create/update rejects non-member `AssignedToUserId` values with `404`
