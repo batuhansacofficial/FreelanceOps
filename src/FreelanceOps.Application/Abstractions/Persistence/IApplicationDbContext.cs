@@ -1,4 +1,5 @@
 using FreelanceOps.Domain.Clients;
+using FreelanceOps.Domain.Projects;
 using FreelanceOps.Domain.Users;
 using FreelanceOps.Domain.Workspaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,10 @@ public interface IApplicationDbContext
     DbSet<WorkspaceMember> WorkspaceMembers { get; }
 
     DbSet<Client> Clients { get; }
+
+    DbSet<Project> Projects { get; }
+
+    DbSet<ProjectTask> ProjectTasks { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
