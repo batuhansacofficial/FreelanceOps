@@ -1,6 +1,27 @@
 # Testing Strategy
 
-Initial test projects have not been added yet.
+Integration tests live in:
+
+```text
+tests/FreelanceOps.IntegrationTests
+```
+
+The integration suite uses:
+
+```text
+xUnit
+Microsoft.AspNetCore.Mvc.Testing
+PostgreSQL Testcontainers
+FluentAssertions
+```
+
+Run locally:
+
+```bash
+dotnet test FreelanceOps.sln --configuration Release
+```
+
+The test host starts the API through `WebApplicationFactory<Program>`, starts an isolated PostgreSQL container, overrides the database/JWT configuration for the `Testing` environment, and applies EF Core migrations before tests run.
 
 The first test scope should cover:
 
@@ -12,6 +33,24 @@ The first test scope should cover:
 - Domain rules for invoices, proposals, and time tracking after those modules exist
 
 Prioritize meaningful integration tests over high-volume shallow tests.
+
+## Automated Integration Coverage
+
+Current integration tests cover:
+
+- Auth registration, duplicate email conflict, login token response, missing-token authorization, and refresh-token reuse rejection
+- Workspace owner membership creation and non-member/member authorization boundaries
+- Client create authorization, cross-workspace detail protection, and soft-delete list filtering
+- Project create authorization, client workspace validation, and cross-workspace detail protection
+- Task assignment validation, cross-workspace project protection, member task status changes, and member project-status denial
+
+CI runs:
+
+```bash
+dotnet restore FreelanceOps.sln
+dotnet build FreelanceOps.sln --no-restore --configuration Release
+dotnet test FreelanceOps.sln --no-build --configuration Release
+```
 
 ## Manual Auth Verification
 
