@@ -12,6 +12,7 @@ Current migrations:
 20260614221112_AddIdentityTables
 20260615181616_AddWorkspaceTables
 20260615185834_AddClientTables
+20260616180417_AddProjectTables
 ```
 
 Client table:
@@ -43,3 +44,71 @@ IX_clients_WorkspaceId_Name
 ```
 
 Client queries must include `WorkspaceId` and `IsDeleted = false` unless the operation is an explicit administrative data-recovery task.
+
+Project table:
+
+```text
+freelance_ops.projects
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ClientId uuid not null
+Name varchar(160) not null
+Description varchar(4000) null
+Status varchar(32) not null
+StartDate date null
+Deadline date null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_projects_ClientId
+IX_projects_WorkspaceId
+IX_projects_WorkspaceId_Name
+IX_projects_WorkspaceId_Status
+```
+
+Project queries must include `WorkspaceId` and `IsDeleted = false`. Project creation must validate that `ClientId` belongs to the same workspace and is not deleted.
+
+Project task table:
+
+```text
+freelance_ops.project_tasks
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ProjectId uuid not null
+Title varchar(200) not null
+Description varchar(4000) null
+Status varchar(32) not null
+Priority varchar(32) not null
+DueDate date null
+AssignedToUserId uuid null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_project_tasks_AssignedToUserId
+IX_project_tasks_ProjectId
+IX_project_tasks_WorkspaceId
+IX_project_tasks_WorkspaceId_ProjectId_Status
+IX_project_tasks_WorkspaceId_Status
+```
+
+Task queries must include `WorkspaceId` and `IsDeleted = false`. Task creation must validate that `ProjectId` belongs to the same workspace and is not deleted. Task assignment must validate that `AssignedToUserId`, when provided, is an active member of the same workspace.
