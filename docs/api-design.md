@@ -89,3 +89,23 @@ Project read endpoints require `Owner`, `Admin`, or `Member`. Project create, up
 Task read, create, update, and status change endpoints require active workspace membership. Task delete requires `Owner` or `Admin`.
 
 Project creation validates that the selected client belongs to the same workspace and is not deleted. Task creation and update validate that the project belongs to the route workspace and that `assignedToUserId`, when provided, is an active member of the same workspace.
+
+Time tracking endpoints:
+
+```http
+POST   /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/start
+POST   /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/manual
+POST   /api/workspaces/{workspaceId}/time-entries/{timeEntryId}/stop
+GET    /api/workspaces/{workspaceId}/time-entries
+GET    /api/workspaces/{workspaceId}/projects/{projectId}/time-entries
+GET    /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries
+PUT    /api/workspaces/{workspaceId}/time-entries/{timeEntryId}
+DELETE /api/workspaces/{workspaceId}/time-entries/{timeEntryId}
+GET    /api/workspaces/{workspaceId}/reports/time-summary
+```
+
+All workspace members can start timers and create manual entries for active tasks. A user can have only one active timer across all workspaces.
+
+Owner/Admin users can list all workspace entries and manage any entry. Members can list only their own entries, stop only their own timer, update only their own manual entries, and delete only their own entries.
+
+Time-entry lists support `page`, `pageSize`, `userId`, `projectId`, `taskId`, `from`, and `to`. The summary endpoint supports date, project, and task filters and returns totals grouped by project and user.
