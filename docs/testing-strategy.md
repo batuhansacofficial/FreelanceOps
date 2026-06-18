@@ -29,8 +29,9 @@ The first test scope should cover:
 - Workspace isolation
 - Client authorization and tenant isolation
 - Project and task tenant isolation
+- Time tracking authorization, timer state, and visibility rules
 - Forbidden cross-workspace access
-- Domain rules for invoices, proposals, and time tracking after those modules exist
+- Domain rules for invoices and proposals after those modules exist
 
 Prioritize meaningful integration tests over high-volume shallow tests.
 
@@ -43,6 +44,7 @@ Current integration tests cover:
 - Client create authorization, cross-workspace detail protection, and soft-delete list filtering
 - Project create authorization, client workspace validation, and cross-workspace detail protection
 - Task assignment validation, cross-workspace project protection, member task status changes, and member project-status denial
+- Time tracking start/stop behavior, global active-timer conflicts, task/workspace validation, manual duration validation, role-based entry visibility, summaries, and soft delete
 
 CI runs:
 
@@ -54,7 +56,7 @@ dotnet test FreelanceOps.sln --no-build --configuration Release
 
 ## Manual Auth Verification
 
-Until integration test infrastructure is added, the auth flow has been manually verified against the real PostgreSQL-backed API:
+The auth flow has also been manually verified against the real PostgreSQL-backed API:
 
 - Missing token on `/api/auth/me` returns `401`
 - Register returns `201`
@@ -137,3 +139,20 @@ The project/task flow has been manually verified against the real PostgreSQL-bac
 - User A can delete a project
 - Deleted project detail returns `404`
 - Task create/update rejects non-member `AssignedToUserId` values with `404`
+
+## Manual Time Tracking Verification
+
+The time-tracking flow has been manually verified against the real PostgreSQL-backed API:
+
+- User A starts a timer and receives `201`
+- Starting a second active timer for the same user returns `409`
+- User A stops the running timer and receives `204`
+- User A creates a manual time entry and receives `201`
+- A non-member cannot list workspace time entries and receives `403`
+- User B can start a timer after becoming a workspace member
+- Owner listing includes User B's time entry
+- Member listing is forced to User B's own entries even when another `userId` is requested
+- Time summary includes stopped timers and manual entries
+- Starting a timer through another workspace route returns `404`
+- Starting a timer for a deleted task returns `404`
+- User B can stop their own timer

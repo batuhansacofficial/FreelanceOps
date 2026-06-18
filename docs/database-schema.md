@@ -13,6 +13,7 @@ Current migrations:
 20260615181616_AddWorkspaceTables
 20260615185834_AddClientTables
 20260616180417_AddProjectTables
+20260618133241_AddTimeTrackingTables
 ```
 
 Client table:
@@ -112,3 +113,39 @@ IX_project_tasks_WorkspaceId_Status
 ```
 
 Task queries must include `WorkspaceId` and `IsDeleted = false`. Task creation must validate that `ProjectId` belongs to the same workspace and is not deleted. Task assignment must validate that `AssignedToUserId`, when provided, is an active member of the same workspace.
+
+Time entry table:
+
+```text
+freelance_ops.time_entries
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ProjectId uuid not null
+TaskId uuid not null
+UserId uuid not null
+StartedAtUtc timestamptz not null
+EndedAtUtc timestamptz null
+DurationMinutes integer null
+Description varchar(2000) null
+Source varchar(32) not null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_time_entries_UserId_EndedAtUtc
+IX_time_entries_WorkspaceId
+IX_time_entries_WorkspaceId_ProjectId
+IX_time_entries_WorkspaceId_TaskId
+IX_time_entries_WorkspaceId_UserId
+```
+
+Time-entry lookups include `WorkspaceId` and `IsDeleted = false`. Timer/manual creation validates that the task and parent project are active members of the same workspace.

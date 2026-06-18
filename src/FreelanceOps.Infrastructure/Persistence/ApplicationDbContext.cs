@@ -1,6 +1,7 @@
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Domain.Clients;
 using FreelanceOps.Domain.Projects;
+using FreelanceOps.Domain.TimeTracking;
 using FreelanceOps.Domain.Users;
 using FreelanceOps.Domain.Workspaces;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Project> Projects => Set<Project>();
 
     public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+
+    public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

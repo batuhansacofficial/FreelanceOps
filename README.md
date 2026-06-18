@@ -15,6 +15,7 @@ Initial solution setup is in place:
 - Workspace and workspace-member endpoints with role-based access checks
 - Workspace-scoped client CRUD with pagination, search, and soft delete
 - Workspace-scoped project and task management with status changes, filters, pagination, assignment checks, and soft delete
+- Workspace-scoped timer/manual time entries with role-based visibility, summaries, and soft delete
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
@@ -133,9 +134,23 @@ PATCH  /api/workspaces/{workspaceId}/tasks/{taskId}/status
 DELETE /api/workspaces/{workspaceId}/tasks/{taskId}
 ```
 
+Time tracking endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/start
+POST   /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/manual
+POST   /api/workspaces/{workspaceId}/time-entries/{timeEntryId}/stop
+GET    /api/workspaces/{workspaceId}/time-entries
+GET    /api/workspaces/{workspaceId}/projects/{projectId}/time-entries
+GET    /api/workspaces/{workspaceId}/tasks/{taskId}/time-entries
+PUT    /api/workspaces/{workspaceId}/time-entries/{timeEntryId}
+DELETE /api/workspaces/{workspaceId}/time-entries/{timeEntryId}
+GET    /api/workspaces/{workspaceId}/reports/time-summary
+```
+
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, client, project, and task endpoints; invoice and report modules still need workspace-scoped guards when implemented.
-- Invoice and report modules are not implemented yet.
+- Workspace isolation exists for workspace, member, client, project, task, and time-tracking endpoints; invoice and broader report modules still need workspace-scoped guards when implemented.
+- Invoice and broader report modules are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.

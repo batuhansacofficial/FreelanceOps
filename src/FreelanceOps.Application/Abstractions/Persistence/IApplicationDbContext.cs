@@ -1,5 +1,6 @@
 using FreelanceOps.Domain.Clients;
 using FreelanceOps.Domain.Projects;
+using FreelanceOps.Domain.TimeTracking;
 using FreelanceOps.Domain.Users;
 using FreelanceOps.Domain.Workspaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ public interface IApplicationDbContext
     DbSet<Project> Projects { get; }
 
     DbSet<ProjectTask> ProjectTasks { get; }
+
+    DbSet<TimeEntry> TimeEntries { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

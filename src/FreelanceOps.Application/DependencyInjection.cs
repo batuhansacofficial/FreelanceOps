@@ -21,6 +21,13 @@ using FreelanceOps.Application.ProjectTasks.DeleteProjectTask;
 using FreelanceOps.Application.ProjectTasks.GetProjectTaskById;
 using FreelanceOps.Application.ProjectTasks.GetProjectTasks;
 using FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
+using FreelanceOps.Application.TimeTracking.CreateManualTimeEntry;
+using FreelanceOps.Application.TimeTracking.DeleteTimeEntry;
+using FreelanceOps.Application.TimeTracking.GetTimeEntries;
+using FreelanceOps.Application.TimeTracking.GetTimeSummary;
+using FreelanceOps.Application.TimeTracking.StartTimer;
+using FreelanceOps.Application.TimeTracking.StopTimer;
+using FreelanceOps.Application.TimeTracking.UpdateTimeEntry;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Workspaces;
 using FreelanceOps.Application.Workspaces.CreateWorkspace;
@@ -75,6 +82,13 @@ public static class DependencyInjection
         services.AddScoped<UpdateProjectTaskHandler>();
         services.AddScoped<ChangeProjectTaskStatusHandler>();
         services.AddScoped<DeleteProjectTaskHandler>();
+        services.AddScoped<StartTimerHandler>();
+        services.AddScoped<StopTimerHandler>();
+        services.AddScoped<CreateManualTimeEntryHandler>();
+        services.AddScoped<GetTimeEntriesHandler>();
+        services.AddScoped<UpdateTimeEntryHandler>();
+        services.AddScoped<DeleteTimeEntryHandler>();
+        services.AddScoped<GetTimeSummaryHandler>();
 
         return services;
     }

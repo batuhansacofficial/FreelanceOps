@@ -32,6 +32,16 @@ The task module enforces:
 - Active workspace membership validation for `AssignedToUserId`
 - `WorkspaceId`, `TaskId`, and `IsDeleted = false` filters for task detail, update, status change, and delete lookups
 
+The time-tracking module enforces:
+
+- Active workspace membership before timer, manual-entry, list, update, delete, and summary operations
+- Same-workspace active task and project validation before creating time entries
+- A global active-timer check by `UserId`, independent of workspace
+- `Owner` or `Admin` visibility across all workspace entries
+- Member visibility restricted to the current user's entries, even when another `userId` query value is supplied
+- Members may stop, update, or delete only their own permitted entries
+- `WorkspaceId`, `TimeEntryId`, and `IsDeleted = false` filters for entry mutations
+
 ## Roles
 
 ```text
@@ -59,4 +69,4 @@ IWorkspaceAccessService.HasAnyRoleAsync(...)
 IWorkspaceAccessService.GetRoleAsync(...)
 ```
 
-Future modules such as invoices, time tracking, and reports must call these services before returning or mutating workspace-scoped data.
+Future modules such as invoices and broader reports must call these services before returning or mutating workspace-scoped data.

@@ -37,6 +37,7 @@ Infrastructure/
   TestWorkspaceHelper.cs
   TestClientHelper.cs
   TestProjectHelper.cs
+  TestTimeEntryHelper.cs
 ```
 
 `CustomWebApplicationFactory`:
@@ -52,7 +53,9 @@ Infrastructure/
 The tests prioritize tenant isolation and authorization across:
 
 ```text
-Auth -> Workspace -> Client -> Project -> Task
+Auth -> Workspace -> Client -> Project -> Task -> TimeEntry
 ```
+
+The suite currently contains 35 tests, including 14 time-tracking tests for timer conflicts, ownership, visibility, updates, summaries, and soft delete.
 
 They intentionally do not attempt exhaustive CRUD coverage. Future billing, invoicing, and reporting modules should add tests for money calculations, state transitions, and cross-workspace access before implementation is accepted.
