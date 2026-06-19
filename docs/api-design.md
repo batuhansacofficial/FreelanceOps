@@ -109,3 +109,21 @@ All workspace members can start timers and create manual entries for active task
 Owner/Admin users can list all workspace entries and manage any entry. Members can list only their own entries, stop only their own timer, update only their own manual entries, and delete only their own entries.
 
 Time-entry lists support `page`, `pageSize`, `userId`, `projectId`, `taskId`, `from`, and `to`. The summary endpoint supports date, project, and task filters and returns totals grouped by project and user.
+
+Billing endpoints:
+
+```http
+POST   /api/workspaces/{workspaceId}/invoices
+GET    /api/workspaces/{workspaceId}/invoices?page=1&pageSize=20&status=Draft&clientId={clientId}&projectId={projectId}&search=INV-2026
+GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}
+PUT    /api/workspaces/{workspaceId}/invoices/{invoiceId}
+DELETE /api/workspaces/{workspaceId}/invoices/{invoiceId}
+PATCH  /api/workspaces/{workspaceId}/invoices/{invoiceId}/send
+PATCH  /api/workspaces/{workspaceId}/invoices/{invoiceId}/cancel
+POST   /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
+GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
+```
+
+Billing endpoints require `Owner` or `Admin`. Members receive `403`.
+
+Invoice creation validates the client, optional project, and project-client relationship within the route workspace. Draft invoices can be edited or soft-deleted. Draft invoices can be sent, payments reduce balance, and a full payment changes status to `Paid`. Paid invoices cannot be cancelled.

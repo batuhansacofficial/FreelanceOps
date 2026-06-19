@@ -16,6 +16,7 @@ Initial solution setup is in place:
 - Workspace-scoped client CRUD with pagination, search, and soft delete
 - Workspace-scoped project and task management with status changes, filters, pagination, assignment checks, and soft delete
 - Workspace-scoped timer/manual time entries with role-based visibility, summaries, and soft delete
+- Owner/Admin-only invoice management with item totals, lifecycle transitions, partial payments, and workspace numbering
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
@@ -148,9 +149,25 @@ DELETE /api/workspaces/{workspaceId}/time-entries/{timeEntryId}
 GET    /api/workspaces/{workspaceId}/reports/time-summary
 ```
 
+Billing endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/invoices
+GET    /api/workspaces/{workspaceId}/invoices
+GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}
+PUT    /api/workspaces/{workspaceId}/invoices/{invoiceId}
+DELETE /api/workspaces/{workspaceId}/invoices/{invoiceId}
+PATCH  /api/workspaces/{workspaceId}/invoices/{invoiceId}/send
+PATCH  /api/workspaces/{workspaceId}/invoices/{invoiceId}/cancel
+POST   /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
+GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
+```
+
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, client, project, task, and time-tracking endpoints; invoice and broader report modules still need workspace-scoped guards when implemented.
-- Invoice and broader report modules are not implemented yet.
+- Workspace isolation exists for workspace, member, client, project, task, time-tracking, and billing endpoints; broader report modules still need workspace-scoped guards when implemented.
+- Invoice PDF export and external payment-provider integration are not implemented.
+- Invoice numbering uses a workspace/year count and is not safe for high-concurrency production workloads.
+- Broader dashboard and report modules are not implemented yet.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.

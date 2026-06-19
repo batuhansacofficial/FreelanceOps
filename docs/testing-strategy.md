@@ -30,6 +30,7 @@ The first test scope should cover:
 - Client authorization and tenant isolation
 - Project and task tenant isolation
 - Time tracking authorization, timer state, and visibility rules
+- Billing authorization, tenant isolation, totals, and lifecycle rules
 - Forbidden cross-workspace access
 - Domain rules for invoices and proposals after those modules exist
 
@@ -45,6 +46,7 @@ Current integration tests cover:
 - Project create authorization, client workspace validation, and cross-workspace detail protection
 - Task assignment validation, cross-workspace project protection, member task status changes, and member project-status denial
 - Time tracking start/stop behavior, global active-timer conflicts, task/workspace validation, manual duration validation, role-based entry visibility, summaries, and soft delete
+- Billing manager-only access, client/project integrity, invoice totals/numbers, state transitions, payments, workspace lists, updates, and soft delete
 
 CI runs:
 
@@ -156,3 +158,16 @@ The time-tracking flow has been manually verified against the real PostgreSQL-ba
 - Starting a timer through another workspace route returns `404`
 - Starting a timer for a deleted task returns `404`
 - User B can stop their own timer
+
+## Manual Billing Verification
+
+The billing flow has been manually verified against the real PostgreSQL-backed API:
+
+- User A creates an invoice and receives `201`
+- Invoice item totals are calculated correctly
+- Non-members and members receive `403` from invoice lists
+- User A sends a draft invoice and receives `204`
+- Recording a full payment returns `201` and changes the invoice to `Paid`
+- Cancelling a paid invoice returns `400`
+- Cross-workspace clients and projects return `404`
+- A project/client mismatch returns `400`
