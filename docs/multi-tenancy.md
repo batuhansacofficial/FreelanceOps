@@ -42,6 +42,16 @@ The time-tracking module enforces:
 - Members may stop, update, or delete only their own permitted entries
 - `WorkspaceId`, `TimeEntryId`, and `IsDeleted = false` filters for entry mutations
 
+The billing module enforces:
+
+- `Owner` or `Admin` role for every invoice and payment operation
+- Same-workspace active client validation before invoice creation
+- Same-workspace active project validation when `ProjectId` is supplied
+- Project `ClientId` must match invoice `ClientId`
+- `WorkspaceId`, `InvoiceId`, and `IsDeleted = false` filters for invoice detail and mutations
+- Invoice lists return only the route workspace's non-deleted invoices
+- Payment listing first validates the parent invoice within the route workspace
+
 ## Roles
 
 ```text
@@ -69,4 +79,4 @@ IWorkspaceAccessService.HasAnyRoleAsync(...)
 IWorkspaceAccessService.GetRoleAsync(...)
 ```
 
-Future modules such as invoices and broader reports must call these services before returning or mutating workspace-scoped data.
+Future dashboard and broader report modules must call these services before returning or aggregating workspace-scoped data.

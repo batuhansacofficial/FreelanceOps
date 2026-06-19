@@ -14,6 +14,7 @@ Current migrations:
 20260615185834_AddClientTables
 20260616180417_AddProjectTables
 20260618133241_AddTimeTrackingTables
+20260619173150_AddBillingTables
 ```
 
 Client table:
@@ -149,3 +150,38 @@ IX_time_entries_WorkspaceId_UserId
 ```
 
 Time-entry lookups include `WorkspaceId` and `IsDeleted = false`. Timer/manual creation validates that the task and parent project are active members of the same workspace.
+
+Invoice table:
+
+```text
+freelance_ops.invoices
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+ClientId uuid not null
+ProjectId uuid null
+InvoiceNumber varchar(32) not null
+Status varchar(32) not null
+IssueDate date not null
+DueDate date not null
+Currency varchar(3) not null
+SubtotalAmount numeric(18,2) not null
+TaxAmount numeric(18,2) not null
+TotalAmount numeric(18,2) not null
+PaidAmount numeric(18,2) not null
+IsDeleted boolean not null
+```
+
+Invoice indexes:
+
+```text
+IX_invoices_WorkspaceId_ClientId
+IX_invoices_WorkspaceId_InvoiceNumber unique
+IX_invoices_WorkspaceId_ProjectId
+IX_invoices_WorkspaceId_Status
+```
+
+Invoice items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Payment amounts use `numeric(18,2)`. Invoice items and payment records cascade when their invoice is physically removed.

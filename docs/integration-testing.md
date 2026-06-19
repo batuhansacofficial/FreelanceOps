@@ -38,6 +38,7 @@ Infrastructure/
   TestClientHelper.cs
   TestProjectHelper.cs
   TestTimeEntryHelper.cs
+  TestBillingHelper.cs
 ```
 
 `CustomWebApplicationFactory`:
@@ -53,9 +54,9 @@ Infrastructure/
 The tests prioritize tenant isolation and authorization across:
 
 ```text
-Auth -> Workspace -> Client -> Project -> Task -> TimeEntry
+Auth -> Workspace -> Client -> Project -> Task -> TimeEntry -> Invoice
 ```
 
-The suite currently contains 35 tests, including 14 time-tracking tests for timer conflicts, ownership, visibility, updates, summaries, and soft delete.
+The suite currently contains 51 tests, including 16 billing tests for authorization, tenant isolation, totals, numbering, lifecycle transitions, payments, updates, and soft delete.
 
-They intentionally do not attempt exhaustive CRUD coverage. Future billing, invoicing, and reporting modules should add tests for money calculations, state transitions, and cross-workspace access before implementation is accepted.
+They intentionally do not attempt exhaustive CRUD coverage. Future dashboard and reporting modules should add tests for financial aggregations and cross-workspace access before implementation is accepted.

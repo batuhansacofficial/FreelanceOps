@@ -1,3 +1,4 @@
+using FreelanceOps.Domain.Billing;
 using FreelanceOps.Domain.Clients;
 using FreelanceOps.Domain.Projects;
 using FreelanceOps.Domain.TimeTracking;
@@ -24,6 +25,12 @@ public interface IApplicationDbContext
     DbSet<ProjectTask> ProjectTasks { get; }
 
     DbSet<TimeEntry> TimeEntries { get; }
+
+    DbSet<Invoice> Invoices { get; }
+
+    DbSet<InvoiceItem> InvoiceItems { get; }
+
+    DbSet<PaymentRecord> PaymentRecords { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,13 @@
 using FluentValidation;
+using FreelanceOps.Application.Billing.CancelInvoice;
+using FreelanceOps.Application.Billing.CreateInvoice;
+using FreelanceOps.Application.Billing.DeleteInvoice;
+using FreelanceOps.Application.Billing.GetInvoiceById;
+using FreelanceOps.Application.Billing.GetInvoicePayments;
+using FreelanceOps.Application.Billing.GetInvoices;
+using FreelanceOps.Application.Billing.RecordPayment;
+using FreelanceOps.Application.Billing.SendInvoice;
+using FreelanceOps.Application.Billing.UpdateInvoice;
 using FreelanceOps.Application.Clients.CreateClient;
 using FreelanceOps.Application.Clients.DeleteClient;
 using FreelanceOps.Application.Clients.GetClientById;
@@ -89,6 +98,15 @@ public static class DependencyInjection
         services.AddScoped<UpdateTimeEntryHandler>();
         services.AddScoped<DeleteTimeEntryHandler>();
         services.AddScoped<GetTimeSummaryHandler>();
+        services.AddScoped<CreateInvoiceHandler>();
+        services.AddScoped<GetInvoicesHandler>();
+        services.AddScoped<GetInvoiceByIdHandler>();
+        services.AddScoped<UpdateInvoiceHandler>();
+        services.AddScoped<DeleteInvoiceHandler>();
+        services.AddScoped<SendInvoiceHandler>();
+        services.AddScoped<CancelInvoiceHandler>();
+        services.AddScoped<RecordPaymentHandler>();
+        services.AddScoped<GetInvoicePaymentsHandler>();
 
         return services;
     }
