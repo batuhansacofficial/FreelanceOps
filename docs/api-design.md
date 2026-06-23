@@ -127,3 +127,14 @@ GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
 Billing endpoints require `Owner` or `Admin`. Members receive `403`.
 
 Invoice creation validates the client, optional project, and project-client relationship within the route workspace. Draft invoices can be edited or soft-deleted. Draft invoices can be sent, payments reduce balance, and a full payment changes status to `Paid`. Paid invoices cannot be cancelled.
+
+Report endpoints:
+
+```http
+GET /api/workspaces/{workspaceId}/reports/dashboard
+GET /api/workspaces/{workspaceId}/reports/revenue?from=2026-06-01&to=2026-06-30&groupBy=month
+GET /api/workspaces/{workspaceId}/reports/client-summary?from=2026-06-01&to=2026-06-30
+GET /api/workspaces/{workspaceId}/reports/project-performance?from=2026-06-01&to=2026-06-30
+```
+
+Business reports require `Owner` or `Admin`; Members receive `403`. Date ranges default to the current UTC month, are inclusive, and cannot exceed 366 days. Revenue is calculated from payment records and grouped by invoice currency. Tracked-time metrics exclude active timers.

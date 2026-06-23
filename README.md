@@ -17,6 +17,7 @@ Initial solution setup is in place:
 - Workspace-scoped project and task management with status changes, filters, pagination, assignment checks, and soft delete
 - Workspace-scoped timer/manual time entries with role-based visibility, summaries, and soft delete
 - Owner/Admin-only invoice management with item totals, lifecycle transitions, partial payments, and workspace numbering
+- Owner/Admin-only dashboard, revenue, client summary, and project performance reports
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
@@ -163,11 +164,22 @@ POST   /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
 GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
 ```
 
+Report endpoints:
+
+```text
+GET /api/workspaces/{workspaceId}/reports/dashboard
+GET /api/workspaces/{workspaceId}/reports/revenue
+GET /api/workspaces/{workspaceId}/reports/client-summary
+GET /api/workspaces/{workspaceId}/reports/project-performance
+```
+
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, client, project, task, time-tracking, and billing endpoints; broader report modules still need workspace-scoped guards when implemented.
+- Workspace isolation exists for workspace, member, client, project, task, time-tracking, billing, and reporting endpoints.
 - Invoice PDF export and external payment-provider integration are not implemented.
 - Invoice numbering uses a workspace/year count and is not safe for high-concurrency production workloads.
-- Broader dashboard and report modules are not implemented yet.
+- Project performance is not profitability because labor costs and expenses are not tracked.
+- Multi-currency revenue is grouped without exchange-rate conversion.
+- Active timers are excluded from reports until stopped.
 - Payment processing, email sending, and file storage are not implemented.
 - Frontend is not part of the initial MVP.

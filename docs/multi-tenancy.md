@@ -52,6 +52,14 @@ The billing module enforces:
 - Invoice lists return only the route workspace's non-deleted invoices
 - Payment listing first validates the parent invoice within the route workspace
 
+The reporting module enforces:
+
+- `Owner` or `Admin` role for every dashboard and business-report endpoint
+- `WorkspaceId` filters on every client, project, time-entry, invoice, and payment aggregation
+- Non-deleted record filters before business metrics are calculated
+- Cross-workspace joins remain constrained by the route workspace
+- Members and non-members receive `403`
+
 ## Roles
 
 ```text
@@ -79,4 +87,4 @@ IWorkspaceAccessService.HasAnyRoleAsync(...)
 IWorkspaceAccessService.GetRoleAsync(...)
 ```
 
-Future dashboard and broader report modules must call these services before returning or aggregating workspace-scoped data.
+Dashboard and business-report handlers call these services before returning or aggregating workspace-scoped data.

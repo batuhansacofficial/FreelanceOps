@@ -54,9 +54,9 @@ Infrastructure/
 The tests prioritize tenant isolation and authorization across:
 
 ```text
-Auth -> Workspace -> Client -> Project -> Task -> TimeEntry -> Invoice
+Auth -> Workspace -> Client -> Project -> Task -> TimeEntry -> Invoice -> Report
 ```
 
-The suite currently contains 51 tests, including 16 billing tests for authorization, tenant isolation, totals, numbering, lifecycle transitions, payments, updates, and soft delete.
+The suite currently contains 69 tests, including 16 billing tests and 18 reporting tests. Reporting coverage verifies authorization, tenant isolation, dashboard metrics, payment-based revenue, multi-currency grouping, date validation, client summaries, and project performance.
 
-They intentionally do not attempt exhaustive CRUD coverage. Future dashboard and reporting modules should add tests for financial aggregations and cross-workspace access before implementation is accepted.
+They intentionally do not attempt exhaustive CRUD coverage. Financial reports are tested through the public HTTP routes against PostgreSQL.
