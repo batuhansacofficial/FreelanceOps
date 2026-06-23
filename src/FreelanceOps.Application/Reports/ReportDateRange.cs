@@ -24,13 +24,16 @@ internal static class ReportDateRange
 
     public static bool IsOrdered(DateOnly? from, DateOnly? to)
     {
-        return !from.HasValue || !to.HasValue || from.Value <= to.Value;
+        var range = Resolve(from, to);
+
+        return range.From <= range.To;
     }
 
     public static bool IsWithinMaximumRange(DateOnly? from, DateOnly? to)
     {
         var range = Resolve(from, to);
 
-        return range.To.DayNumber - range.From.DayNumber <= 365;
+        return range.From <= range.To &&
+               range.To.DayNumber - range.From.DayNumber <= 365;
     }
 }

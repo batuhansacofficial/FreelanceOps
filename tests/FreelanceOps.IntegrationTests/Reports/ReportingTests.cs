@@ -429,6 +429,22 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
     }
 
     [Fact]
+    public async Task RevenueReport_ShouldReturnBadRequest_WhenDefaultedFromIsAfterTo()
+    {
+        var owner = await TestAuthHelper.RegisterAndLoginAsync(Client);
+        using var ownerClient = CreateAuthenticatedClient(owner);
+        var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(ownerClient);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var previousMonthEnd = new DateOnly(today.Year, today.Month, 1).AddDays(-1);
+
+        var response = await ownerClient.GetAsync(
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue" +
+            $"?to={previousMonthEnd:yyyy-MM-dd}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task RevenueReport_ShouldReturnBadRequest_WhenDateRangeExceeds366Days()
     {
         var owner = await TestAuthHelper.RegisterAndLoginAsync(Client);
