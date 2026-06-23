@@ -1,5 +1,6 @@
 using FreelanceOps.Application.Reports.GetClientSummary;
 using FreelanceOps.Application.Reports.GetDashboard;
+using FreelanceOps.Application.Reports.GetProjectPerformance;
 using FreelanceOps.Application.Reports.GetRevenueReport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ namespace FreelanceOps.Api.Controllers;
 public sealed class ReportsController(
     GetClientSummaryHandler getClientSummaryHandler,
     GetDashboardHandler getDashboardHandler,
+    GetProjectPerformanceHandler getProjectPerformanceHandler,
     GetRevenueReportHandler getRevenueReportHandler) : ControllerBase
 {
     [HttpGet("dashboard")]
@@ -53,6 +55,21 @@ public sealed class ReportsController(
     {
         var response = await getClientSummaryHandler.Handle(
             new GetClientSummaryQuery(workspaceId, from, to),
+            cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("project-performance")]
+    [ProducesResponseType<ProjectPerformanceResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProjectPerformance(
+        Guid workspaceId,
+        [FromQuery] DateOnly? from = null,
+        [FromQuery] DateOnly? to = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await getProjectPerformanceHandler.Handle(
+            new GetProjectPerformanceQuery(workspaceId, from, to),
             cancellationToken);
 
         return Ok(response);

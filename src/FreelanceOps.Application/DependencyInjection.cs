@@ -32,6 +32,7 @@ using FreelanceOps.Application.ProjectTasks.GetProjectTasks;
 using FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
 using FreelanceOps.Application.Reports.GetClientSummary;
 using FreelanceOps.Application.Reports.GetDashboard;
+using FreelanceOps.Application.Reports.GetProjectPerformance;
 using FreelanceOps.Application.Reports.GetRevenueReport;
 using FreelanceOps.Application.TimeTracking.CreateManualTimeEntry;
 using FreelanceOps.Application.TimeTracking.DeleteTimeEntry;
@@ -113,6 +114,7 @@ public static class DependencyInjection
         services.AddScoped<GetDashboardHandler>();
         services.AddScoped<GetRevenueReportHandler>();
         services.AddScoped<GetClientSummaryHandler>();
+        services.AddScoped<GetProjectPerformanceHandler>();
 
         return services;
     }
