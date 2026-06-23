@@ -34,13 +34,14 @@ public static class TestTimeEntryHelper
         HttpClient client,
         Guid workspaceId,
         Guid taskId,
-        int durationMinutes = 60)
+        int durationMinutes = 60,
+        DateTime? startedAtUtc = null)
     {
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/manual",
             new
             {
-                StartedAtUtc = DateTime.UtcNow.AddHours(-2),
+                StartedAtUtc = startedAtUtc ?? DateTime.UtcNow.AddHours(-2),
                 DurationMinutes = durationMinutes,
                 Description = "Integration test manual entry."
             });
