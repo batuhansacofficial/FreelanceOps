@@ -1,3 +1,4 @@
+using FreelanceOps.Application.Reports.GetClientSummary;
 using FreelanceOps.Application.Reports.GetDashboard;
 using FreelanceOps.Application.Reports.GetRevenueReport;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FreelanceOps.Api.Controllers;
 [ApiController]
 [Route("api/workspaces/{workspaceId:guid}/reports")]
 public sealed class ReportsController(
+    GetClientSummaryHandler getClientSummaryHandler,
     GetDashboardHandler getDashboardHandler,
     GetRevenueReportHandler getRevenueReportHandler) : ControllerBase
 {
@@ -36,6 +38,21 @@ public sealed class ReportsController(
     {
         var response = await getRevenueReportHandler.Handle(
             new GetRevenueReportQuery(workspaceId, from, to, groupBy),
+            cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("client-summary")]
+    [ProducesResponseType<ClientSummaryResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetClientSummary(
+        Guid workspaceId,
+        [FromQuery] DateOnly? from = null,
+        [FromQuery] DateOnly? to = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await getClientSummaryHandler.Handle(
+            new GetClientSummaryQuery(workspaceId, from, to),
             cancellationToken);
 
         return Ok(response);
