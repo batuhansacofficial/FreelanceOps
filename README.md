@@ -17,6 +17,7 @@ Initial solution setup is in place:
 - Workspace-scoped project and task management with status changes, filters, pagination, assignment checks, and soft delete
 - Workspace-scoped timer/manual time entries with role-based visibility, summaries, and soft delete
 - Owner/Admin-only invoice management with item totals, lifecycle transitions, partial payments, and workspace numbering
+- Owner/Admin-only proposal management with item totals, lifecycle transitions, workspace numbering, and project conversion
 - Owner/Admin-only dashboard, revenue, client summary, and project performance reports
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
@@ -164,6 +165,21 @@ POST   /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
 GET    /api/workspaces/{workspaceId}/invoices/{invoiceId}/payments
 ```
 
+Proposal endpoints:
+
+```text
+POST   /api/workspaces/{workspaceId}/proposals
+GET    /api/workspaces/{workspaceId}/proposals
+GET    /api/workspaces/{workspaceId}/proposals/{proposalId}
+PUT    /api/workspaces/{workspaceId}/proposals/{proposalId}
+DELETE /api/workspaces/{workspaceId}/proposals/{proposalId}
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/send
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/accept
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/reject
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/cancel
+POST   /api/workspaces/{workspaceId}/proposals/{proposalId}/convert-to-project
+```
+
 Report endpoints:
 
 ```text
@@ -175,9 +191,11 @@ GET /api/workspaces/{workspaceId}/reports/project-performance
 
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, client, project, task, time-tracking, billing, and reporting endpoints.
+- Workspace isolation exists for workspace, member, client, project, task, time-tracking, billing, proposal, and reporting endpoints.
 - Invoice PDF export and external payment-provider integration are not implemented.
 - Invoice numbering uses a workspace/year count and is not safe for high-concurrency production workloads.
+- Proposal PDF export, public client approval portal, and email delivery are not implemented.
+- Proposal numbering uses a workspace/year count and is not safe for high-concurrency production workloads.
 - Project performance is not profitability because labor costs and expenses are not tracked.
 - Multi-currency revenue is grouped without exchange-rate conversion.
 - Active timers are excluded from reports until stopped.

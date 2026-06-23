@@ -2,6 +2,7 @@ using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Domain.Billing;
 using FreelanceOps.Domain.Clients;
 using FreelanceOps.Domain.Projects;
+using FreelanceOps.Domain.Proposals;
 using FreelanceOps.Domain.TimeTracking;
 using FreelanceOps.Domain.Users;
 using FreelanceOps.Domain.Workspaces;
@@ -33,6 +34,10 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<InvoiceItem> InvoiceItems => Set<InvoiceItem>();
 
     public DbSet<PaymentRecord> PaymentRecords => Set<PaymentRecord>();
+
+    public DbSet<Proposal> Proposals => Set<Proposal>();
+
+    public DbSet<ProposalItem> ProposalItems => Set<ProposalItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

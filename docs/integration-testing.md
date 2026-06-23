@@ -39,6 +39,7 @@ Infrastructure/
   TestProjectHelper.cs
   TestTimeEntryHelper.cs
   TestBillingHelper.cs
+  TestProposalHelper.cs
 ```
 
 `CustomWebApplicationFactory`:
@@ -54,9 +55,9 @@ Infrastructure/
 The tests prioritize tenant isolation and authorization across:
 
 ```text
-Auth -> Workspace -> Client -> Project -> Task -> TimeEntry -> Invoice -> Report
+Auth -> Workspace -> Client -> Proposal -> Project -> Task -> TimeEntry -> Invoice -> Report
 ```
 
-The suite currently contains 69 tests, including 16 billing tests and 18 reporting tests. Reporting coverage verifies authorization, tenant isolation, dashboard metrics, payment-based revenue, multi-currency grouping, date validation, client summaries, and project performance.
+The suite currently contains 84 tests, including 16 billing tests, 15 proposal tests, and 18 reporting tests. Proposal coverage verifies authorization, tenant isolation, totals, status transitions, expired acceptance rejection, soft delete, and convert-to-project rules. Reporting coverage verifies authorization, tenant isolation, dashboard metrics, payment-based revenue, multi-currency grouping, date validation, client summaries, and project performance.
 
 They intentionally do not attempt exhaustive CRUD coverage. Financial reports are tested through the public HTTP routes against PostgreSQL.

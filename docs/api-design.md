@@ -128,6 +128,25 @@ Billing endpoints require `Owner` or `Admin`. Members receive `403`.
 
 Invoice creation validates the client, optional project, and project-client relationship within the route workspace. Draft invoices can be edited or soft-deleted. Draft invoices can be sent, payments reduce balance, and a full payment changes status to `Paid`. Paid invoices cannot be cancelled.
 
+Proposal endpoints:
+
+```http
+POST   /api/workspaces/{workspaceId}/proposals
+GET    /api/workspaces/{workspaceId}/proposals?page=1&pageSize=20&status=Sent&clientId={clientId}&search=backend
+GET    /api/workspaces/{workspaceId}/proposals/{proposalId}
+PUT    /api/workspaces/{workspaceId}/proposals/{proposalId}
+DELETE /api/workspaces/{workspaceId}/proposals/{proposalId}
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/send
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/accept
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/reject
+PATCH  /api/workspaces/{workspaceId}/proposals/{proposalId}/cancel
+POST   /api/workspaces/{workspaceId}/proposals/{proposalId}/convert-to-project
+```
+
+Proposal endpoints require `Owner` or `Admin`. Members receive `403`.
+
+Proposal creation validates the client inside the route workspace. Draft proposals can be edited or soft-deleted. Draft proposals can be sent, sent proposals can be accepted or rejected, expired proposals cannot be accepted, and accepted proposals can be converted to one draft project.
+
 Report endpoints:
 
 ```http

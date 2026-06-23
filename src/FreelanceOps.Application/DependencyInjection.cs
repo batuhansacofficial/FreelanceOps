@@ -30,6 +30,16 @@ using FreelanceOps.Application.ProjectTasks.DeleteProjectTask;
 using FreelanceOps.Application.ProjectTasks.GetProjectTaskById;
 using FreelanceOps.Application.ProjectTasks.GetProjectTasks;
 using FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
+using FreelanceOps.Application.Proposals.AcceptProposal;
+using FreelanceOps.Application.Proposals.CancelProposal;
+using FreelanceOps.Application.Proposals.ConvertProposalToProject;
+using FreelanceOps.Application.Proposals.CreateProposal;
+using FreelanceOps.Application.Proposals.DeleteProposal;
+using FreelanceOps.Application.Proposals.GetProposalById;
+using FreelanceOps.Application.Proposals.GetProposals;
+using FreelanceOps.Application.Proposals.RejectProposal;
+using FreelanceOps.Application.Proposals.SendProposal;
+using FreelanceOps.Application.Proposals.UpdateProposal;
 using FreelanceOps.Application.Reports.GetClientSummary;
 using FreelanceOps.Application.Reports.GetDashboard;
 using FreelanceOps.Application.Reports.GetProjectPerformance;
@@ -115,6 +125,16 @@ public static class DependencyInjection
         services.AddScoped<GetRevenueReportHandler>();
         services.AddScoped<GetClientSummaryHandler>();
         services.AddScoped<GetProjectPerformanceHandler>();
+        services.AddScoped<CreateProposalHandler>();
+        services.AddScoped<GetProposalsHandler>();
+        services.AddScoped<GetProposalByIdHandler>();
+        services.AddScoped<UpdateProposalHandler>();
+        services.AddScoped<DeleteProposalHandler>();
+        services.AddScoped<SendProposalHandler>();
+        services.AddScoped<AcceptProposalHandler>();
+        services.AddScoped<RejectProposalHandler>();
+        services.AddScoped<CancelProposalHandler>();
+        services.AddScoped<ConvertProposalToProjectHandler>();
 
         return services;
     }

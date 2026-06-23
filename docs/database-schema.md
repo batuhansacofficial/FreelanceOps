@@ -15,6 +15,7 @@ Current migrations:
 20260616180417_AddProjectTables
 20260618133241_AddTimeTrackingTables
 20260619173150_AddBillingTables
+20260623165342_AddProposalTables
 ```
 
 Client table:
@@ -185,3 +186,39 @@ IX_invoices_WorkspaceId_Status
 ```
 
 Invoice items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Payment amounts use `numeric(18,2)`. Invoice items and payment records cascade when their invoice is physically removed.
+
+Proposal table:
+
+```text
+freelance_ops.proposals
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+ClientId uuid not null
+ConvertedProjectId uuid null
+ProposalNumber varchar(32) not null
+Title varchar(200) not null
+Scope varchar(4000) not null
+Status varchar(32) not null
+ValidUntil date not null
+Currency varchar(3) not null
+SubtotalAmount numeric(18,2) not null
+TaxAmount numeric(18,2) not null
+TotalAmount numeric(18,2) not null
+IsDeleted boolean not null
+```
+
+Proposal indexes:
+
+```text
+IX_proposals_ConvertedProjectId unique where ConvertedProjectId is not null
+IX_proposals_WorkspaceId_ClientId
+IX_proposals_WorkspaceId_ProposalNumber unique
+IX_proposals_WorkspaceId_Status
+IX_proposals_WorkspaceId_Title
+```
+
+Proposal items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Proposal items cascade when their proposal is physically removed.
