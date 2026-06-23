@@ -47,6 +47,7 @@ Current integration tests cover:
 - Task assignment validation, cross-workspace project protection, member task status changes, and member project-status denial
 - Time tracking start/stop behavior, global active-timer conflicts, task/workspace validation, manual duration validation, role-based entry visibility, summaries, and soft delete
 - Billing manager-only access, client/project integrity, invoice totals/numbers, state transitions, payments, workspace lists, updates, and soft delete
+- Reporting manager-only access, empty-state metrics, payment-based revenue, outstanding/overdue invoices, stopped-time metrics, date validation, multi-currency grouping, and tenant isolation
 
 CI runs:
 
@@ -171,3 +172,19 @@ The billing flow has been manually verified against the real PostgreSQL-backed A
 - Cancelling a paid invoice returns `400`
 - Cross-workspace clients and projects return `404`
 - A project/client mismatch returns `400`
+
+## Reporting Verification
+
+Reporting integration tests verify:
+
+- Owner and Admin access
+- Member and non-member `403` responses
+- Empty dashboard metrics
+- Active/completed project and client counts
+- Payment-based revenue instead of invoice totals
+- Outstanding and overdue invoice calculations
+- Active-timer exclusion
+- Multi-currency revenue grouping
+- Date range and grouping validation
+- Client and project metrics
+- Cross-workspace isolation
