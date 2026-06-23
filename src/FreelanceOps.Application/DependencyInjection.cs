@@ -30,6 +30,7 @@ using FreelanceOps.Application.ProjectTasks.DeleteProjectTask;
 using FreelanceOps.Application.ProjectTasks.GetProjectTaskById;
 using FreelanceOps.Application.ProjectTasks.GetProjectTasks;
 using FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
+using FreelanceOps.Application.Reports.GetDashboard;
 using FreelanceOps.Application.TimeTracking.CreateManualTimeEntry;
 using FreelanceOps.Application.TimeTracking.DeleteTimeEntry;
 using FreelanceOps.Application.TimeTracking.GetTimeEntries;
@@ -107,6 +108,7 @@ public static class DependencyInjection
         services.AddScoped<CancelInvoiceHandler>();
         services.AddScoped<RecordPaymentHandler>();
         services.AddScoped<GetInvoicePaymentsHandler>();
+        services.AddScoped<GetDashboardHandler>();
 
         return services;
     }
