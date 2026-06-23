@@ -1,10 +1,12 @@
 using FreelanceOps.Application.Abstractions.Authentication;
 using FreelanceOps.Application.Abstractions.Billing;
 using FreelanceOps.Application.Abstractions.Persistence;
+using FreelanceOps.Application.Abstractions.Proposals;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Infrastructure.Authentication;
 using FreelanceOps.Infrastructure.Billing;
 using FreelanceOps.Infrastructure.Persistence;
+using FreelanceOps.Infrastructure.Proposals;
 using FreelanceOps.Infrastructure.Workspaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IWorkspaceAccessService, WorkspaceAccessService>();
         services.AddScoped<IInvoiceNumberGenerator, InvoiceNumberGenerator>();
+        services.AddScoped<IProposalNumberGenerator, ProposalNumberGenerator>();
 
         return services;
     }
