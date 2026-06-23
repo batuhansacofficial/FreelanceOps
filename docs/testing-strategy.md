@@ -47,6 +47,7 @@ Current integration tests cover:
 - Task assignment validation, cross-workspace project protection, member task status changes, and member project-status denial
 - Time tracking start/stop behavior, global active-timer conflicts, task/workspace validation, manual duration validation, role-based entry visibility, summaries, and soft delete
 - Billing manager-only access, client/project integrity, invoice totals/numbers, state transitions, payments, workspace lists, updates, and soft delete
+- Proposal manager-only access, client integrity, proposal totals/numbers, state transitions, expired acceptance rejection, workspace lists, soft delete, and project conversion
 - Reporting manager-only access, empty-state metrics, payment-based revenue, outstanding/overdue invoices, stopped-time metrics, date validation, multi-currency grouping, and tenant isolation
 
 CI runs:
@@ -172,6 +173,21 @@ The billing flow has been manually verified against the real PostgreSQL-backed A
 - Cancelling a paid invoice returns `400`
 - Cross-workspace clients and projects return `404`
 - A project/client mismatch returns `400`
+
+## Proposal Verification
+
+Proposal integration tests verify:
+
+- Owner and Admin-only endpoint access
+- Member `403` responses
+- Cross-workspace client rejection
+- Item-based subtotal, tax, and total calculations
+- Workspace/year proposal number generation
+- Workspace-isolated lists
+- Draft-only update and soft-delete rules
+- Draft to sent to accepted/rejected status changes
+- Expired proposal acceptance rejection
+- Accepted proposal conversion to one draft project
 
 ## Reporting Verification
 
