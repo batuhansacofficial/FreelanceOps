@@ -57,6 +57,12 @@ Start infrastructure:
 docker compose up -d
 ```
 
+Restore local .NET tools:
+
+```bash
+dotnet tool restore
+```
+
 Run the API:
 
 ```bash
