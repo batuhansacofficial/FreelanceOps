@@ -11,6 +11,7 @@ using FreelanceOps.Infrastructure.BackgroundJobs;
 using FreelanceOps.Infrastructure.Billing;
 using FreelanceOps.Infrastructure.Notifications;
 using FreelanceOps.Infrastructure.Persistence;
+using FreelanceOps.Infrastructure.Persistence.Seeding;
 using FreelanceOps.Infrastructure.Proposals;
 using FreelanceOps.Infrastructure.Workspaces;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,9 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IExpiredProposalJob, ExpiredProposalJob>();
         services.AddScoped<IOverdueInvoiceNotificationJob, OverdueInvoiceNotificationJob>();
+        services.Configure<DemoSeedOptions>(configuration.GetSection(DemoSeedOptions.SectionName));
+        services.AddScoped<IDemoDataSeeder, DemoDataSeeder>();
+        services.AddHostedService<DemoSeedHostedService>();
 
         return services;
     }
