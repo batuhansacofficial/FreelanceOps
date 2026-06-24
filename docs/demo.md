@@ -66,6 +66,27 @@ The seeded data is designed to make dashboard, revenue, client summary, project
 performance, invoice, time-entry, and notification endpoints return non-empty
 results.
 
+## Expected Report Data
+
+The demo dataset is intentionally small and deterministic:
+
+```text
+Clients: 2
+Projects: 2 active, 1 completed
+Tracked time this month: 64 hours
+Paid revenue this month: 4210 USD
+Outstanding invoice amount: 2600 USD
+Overdue invoices: 1
+Unread notifications: 3
+```
+
+Client-level report data:
+
+```text
+Acme Studio: 46 tracked hours, 2500 USD paid, 2600 USD outstanding
+Northwind Digital: 18 tracked hours, 1710 USD paid, 0 USD outstanding
+```
+
 ## Suggested API Flow
 
 Use `docs/http/freelanceops-demo.http` with Visual Studio, Rider, or the VS Code

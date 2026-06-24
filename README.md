@@ -20,6 +20,7 @@ Initial solution setup is in place:
 - Owner/Admin-only proposal management with item totals, lifecycle transitions, workspace numbering, and project conversion
 - Owner/Admin-only dashboard, revenue, client summary, and project performance reports
 - Database-backed per-user workspace notifications and due-date monitoring jobs
+- Development-only demo seed data and HTTP request collection
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
