@@ -1,9 +1,11 @@
 using FluentValidation;
 using FreelanceOps.Application.Abstractions.Authentication;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Common.Exceptions;
 using FreelanceOps.Application.Workspaces;
+using FreelanceOps.Domain.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreelanceOps.Application.ProjectTasks.UpdateProjectTask;
@@ -12,6 +14,7 @@ public sealed class UpdateProjectTaskHandler(
     IApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
     IWorkspaceAuthorizationService workspaceAuthorizationService,
+    INotificationService notificationService,
     IValidator<UpdateProjectTaskCommand> validator)
 {
     public async Task Handle(
@@ -83,12 +86,29 @@ public sealed class UpdateProjectTaskHandler(
             }
         }
 
+        var previousAssignedToUserId = task.AssignedToUserId;
+
         task.Update(
             command.Title,
             command.Description,
             command.Priority,
             command.DueDate,
             command.AssignedToUserId);
+
+        if (task.AssignedToUserId.HasValue &&
+            task.AssignedToUserId != previousAssignedToUserId)
+        {
+            await notificationService.CreateAsync(
+                task.WorkspaceId,
+                task.AssignedToUserId.Value,
+                NotificationType.TaskAssigned,
+                "Task assigned",
+                $"Task {task.Title} was assigned to you.",
+                "Task",
+                task.Id,
+                $"task-assigned:{task.Id}:{task.AssignedToUserId.Value}",
+                cancellationToken);
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -1,9 +1,12 @@
 using FluentValidation;
 using FreelanceOps.Application.Abstractions.Authentication;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Common.Exceptions;
 using FreelanceOps.Application.Workspaces;
+using FreelanceOps.Domain.Billing;
+using FreelanceOps.Domain.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreelanceOps.Application.Billing.RecordPayment;
@@ -12,6 +15,7 @@ public sealed class RecordPaymentHandler(
     IApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
     IWorkspaceAuthorizationService workspaceAuthorizationService,
+    INotificationService notificationService,
     IValidator<RecordPaymentCommand> validator)
 {
     public async Task<RecordPaymentResponse> Handle(
@@ -55,6 +59,20 @@ public sealed class RecordPaymentHandler(
             command.PaidAt);
 
         dbContext.PaymentRecords.Add(payment);
+
+        if (invoice.Status == InvoiceStatus.Paid)
+        {
+            await notificationService.CreateForWorkspaceRolesAsync(
+                invoice.WorkspaceId,
+                WorkspaceRoles.Managers,
+                NotificationType.InvoicePaid,
+                "Invoice paid",
+                $"Invoice {invoice.InvoiceNumber} was paid.",
+                "Invoice",
+                invoice.Id,
+                $"invoice-paid:{invoice.Id}",
+                cancellationToken);
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

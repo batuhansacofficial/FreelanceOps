@@ -1,9 +1,11 @@
 using FluentValidation;
 using FreelanceOps.Application.Abstractions.Authentication;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Common.Exceptions;
 using FreelanceOps.Application.Workspaces;
+using FreelanceOps.Domain.Notifications;
 using FreelanceOps.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,7 @@ public sealed class ConvertProposalToProjectHandler(
     IApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
     IWorkspaceAuthorizationService workspaceAuthorizationService,
+    INotificationService notificationService,
     IValidator<ConvertProposalToProjectCommand> validator)
 {
     public async Task<ConvertProposalToProjectResponse> Handle(
@@ -64,6 +67,17 @@ public sealed class ConvertProposalToProjectHandler(
 
         proposal.MarkConverted(project.Id);
         dbContext.Projects.Add(project);
+
+        await notificationService.CreateForWorkspaceRolesAsync(
+            proposal.WorkspaceId,
+            WorkspaceRoles.Managers,
+            NotificationType.ProposalConvertedToProject,
+            "Proposal converted",
+            $"Proposal {proposal.ProposalNumber} was converted to a project.",
+            "Proposal",
+            proposal.Id,
+            $"proposal-converted:{proposal.Id}",
+            cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

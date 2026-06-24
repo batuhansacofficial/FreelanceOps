@@ -1,9 +1,11 @@
 using FluentValidation;
 using FreelanceOps.Application.Abstractions.Authentication;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Common.Exceptions;
 using FreelanceOps.Application.Workspaces;
+using FreelanceOps.Domain.Notifications;
 using FreelanceOps.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,7 @@ public sealed class CreateProjectTaskHandler(
     IApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
     IWorkspaceAuthorizationService workspaceAuthorizationService,
+    INotificationService notificationService,
     IValidator<CreateProjectTaskCommand> validator)
 {
     public async Task<CreateProjectTaskResponse> Handle(
@@ -81,6 +84,20 @@ public sealed class CreateProjectTaskHandler(
             command.AssignedToUserId);
 
         dbContext.ProjectTasks.Add(task);
+
+        if (task.AssignedToUserId.HasValue)
+        {
+            await notificationService.CreateAsync(
+                task.WorkspaceId,
+                task.AssignedToUserId.Value,
+                NotificationType.TaskAssigned,
+                "Task assigned",
+                $"Task {task.Title} was assigned to you.",
+                "Task",
+                task.Id,
+                $"task-assigned:{task.Id}:{task.AssignedToUserId.Value}",
+                cancellationToken);
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
