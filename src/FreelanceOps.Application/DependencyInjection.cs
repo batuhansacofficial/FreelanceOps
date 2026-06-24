@@ -18,6 +18,10 @@ using FreelanceOps.Application.Identity.Login;
 using FreelanceOps.Application.Identity.Logout;
 using FreelanceOps.Application.Identity.RefreshToken;
 using FreelanceOps.Application.Identity.Register;
+using FreelanceOps.Application.Notifications.GetNotifications;
+using FreelanceOps.Application.Notifications.GetUnreadNotificationCount;
+using FreelanceOps.Application.Notifications.MarkAllNotificationsAsRead;
+using FreelanceOps.Application.Notifications.MarkNotificationAsRead;
 using FreelanceOps.Application.Projects.ChangeProjectStatus;
 using FreelanceOps.Application.Projects.CreateProject;
 using FreelanceOps.Application.Projects.DeleteProject;
@@ -135,6 +139,10 @@ public static class DependencyInjection
         services.AddScoped<RejectProposalHandler>();
         services.AddScoped<CancelProposalHandler>();
         services.AddScoped<ConvertProposalToProjectHandler>();
+        services.AddScoped<GetNotificationsHandler>();
+        services.AddScoped<GetUnreadNotificationCountHandler>();
+        services.AddScoped<MarkNotificationAsReadHandler>();
+        services.AddScoped<MarkAllNotificationsAsReadHandler>();
 
         return services;
     }

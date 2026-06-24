@@ -1,0 +1,3 @@
+namespace FreelanceOps.Application.Notifications.MarkAllNotificationsAsRead;
+
+public sealed record MarkAllNotificationsAsReadCommand(Guid WorkspaceId);
