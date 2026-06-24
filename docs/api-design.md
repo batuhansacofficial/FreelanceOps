@@ -157,3 +157,14 @@ GET /api/workspaces/{workspaceId}/reports/project-performance?from=2026-06-01&to
 ```
 
 Business reports require `Owner` or `Admin`; Members receive `403`. Date ranges default to the current UTC month, are inclusive, and cannot exceed 366 days. Revenue is calculated from payment records and grouped by invoice currency. Tracked-time metrics exclude active timers.
+
+Notification endpoints:
+
+```http
+GET   /api/workspaces/{workspaceId}/notifications?page=1&pageSize=20&isRead=false
+GET   /api/workspaces/{workspaceId}/notifications/unread-count
+PATCH /api/workspaces/{workspaceId}/notifications/{notificationId}/read
+PATCH /api/workspaces/{workspaceId}/notifications/read-all
+```
+
+Notification endpoints require active workspace membership. A requester can only list, count, and mark their own notifications. Owner/Admin users do not get access to another user's notifications.
