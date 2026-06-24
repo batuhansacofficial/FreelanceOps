@@ -49,6 +49,7 @@ Current integration tests cover:
 - Billing manager-only access, client/project integrity, invoice totals/numbers, state transitions, payments, workspace lists, updates, and soft delete
 - Proposal manager-only access, client integrity, proposal totals/numbers, state transitions, expired acceptance rejection, workspace lists, soft delete, and project conversion
 - Reporting manager-only access, empty-state metrics, payment-based revenue, outstanding/overdue invoices, stopped-time metrics, date validation, multi-currency grouping, and tenant isolation
+- Notification member access, per-user visibility, unread counts, read/read-all behavior, and background job deduplication
 
 CI runs:
 
@@ -188,6 +189,20 @@ Proposal integration tests verify:
 - Draft to sent to accepted/rejected status changes
 - Expired proposal acceptance rejection
 - Accepted proposal conversion to one draft project
+
+## Notification And Background Job Verification
+
+Notification and background job integration tests verify:
+
+- Current users only see their own workspace notifications
+- Non-members receive `403`
+- Unread count ignores read notifications and other users' notifications
+- Single notification read and read-all operations
+- Another user's notification returns `404` when marked as read
+- Expired proposal job changes `Sent` proposals to `Expired`
+- Expired proposal job notifies Owner/Admin users without duplicates
+- Overdue invoice job creates notifications without changing invoice status
+- Overdue invoice job does not duplicate notifications
 
 ## Reporting Verification
 

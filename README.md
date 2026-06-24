@@ -19,6 +19,7 @@ Initial solution setup is in place:
 - Owner/Admin-only invoice management with item totals, lifecycle transitions, partial payments, and workspace numbering
 - Owner/Admin-only proposal management with item totals, lifecycle transitions, workspace numbering, and project conversion
 - Owner/Admin-only dashboard, revenue, client summary, and project performance reports
+- Database-backed per-user workspace notifications and due-date monitoring jobs
 - Integration tests using xUnit, WebApplicationFactory, PostgreSQL Testcontainers, and FluentAssertions
 - OpenAPI document and Swagger UI in development
 - Global exception middleware
@@ -189,6 +190,15 @@ GET /api/workspaces/{workspaceId}/reports/client-summary
 GET /api/workspaces/{workspaceId}/reports/project-performance
 ```
 
+Notification endpoints:
+
+```text
+GET   /api/workspaces/{workspaceId}/notifications
+GET   /api/workspaces/{workspaceId}/notifications/unread-count
+PATCH /api/workspaces/{workspaceId}/notifications/{notificationId}/read
+PATCH /api/workspaces/{workspaceId}/notifications/read-all
+```
+
 ## Known Limitations
 
 - Workspace isolation exists for workspace, member, client, project, task, time-tracking, billing, proposal, and reporting endpoints.
@@ -199,5 +209,5 @@ GET /api/workspaces/{workspaceId}/reports/project-performance
 - Project performance is not profitability because labor costs and expenses are not tracked.
 - Multi-currency revenue is grouped without exchange-rate conversion.
 - Active timers are excluded from reports until stopped.
-- Payment processing, email sending, and file storage are not implemented.
+- Real-time SignalR notification delivery, email sending, payment processing, and file storage are not implemented.
 - Frontend is not part of the initial MVP.

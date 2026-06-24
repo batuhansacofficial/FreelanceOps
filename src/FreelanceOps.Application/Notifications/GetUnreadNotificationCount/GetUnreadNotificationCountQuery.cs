@@ -1,0 +1,3 @@
+namespace FreelanceOps.Application.Notifications.GetUnreadNotificationCount;
+
+public sealed record GetUnreadNotificationCountQuery(Guid WorkspaceId);

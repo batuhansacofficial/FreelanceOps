@@ -1,6 +1,7 @@
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Domain.Billing;
 using FreelanceOps.Domain.Clients;
+using FreelanceOps.Domain.Notifications;
 using FreelanceOps.Domain.Projects;
 using FreelanceOps.Domain.Proposals;
 using FreelanceOps.Domain.TimeTracking;
@@ -38,6 +39,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Proposal> Proposals => Set<Proposal>();
 
     public DbSet<ProposalItem> ProposalItems => Set<ProposalItem>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

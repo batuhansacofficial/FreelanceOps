@@ -16,6 +16,7 @@ Current migrations:
 20260618133241_AddTimeTrackingTables
 20260619173150_AddBillingTables
 20260623165342_AddProposalTables
+20260624140422_AddNotificationTables
 ```
 
 Client table:
@@ -222,3 +223,35 @@ IX_proposals_WorkspaceId_Title
 ```
 
 Proposal items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Proposal items cascade when their proposal is physically removed.
+
+Notification table:
+
+```text
+freelance_ops.notifications
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+UserId uuid not null
+Type varchar(64) not null
+Title varchar(200) not null
+Message varchar(1000) not null
+RelatedEntityType varchar(64) null
+RelatedEntityId uuid null
+DeduplicationKey varchar(200) null
+IsRead boolean not null
+CreatedAtUtc timestamptz not null
+ReadAtUtc timestamptz null
+```
+
+Notification indexes:
+
+```text
+IX_notifications_WorkspaceId_UserId_IsRead
+IX_notifications_WorkspaceId_UserId_CreatedAtUtc
+IX_notifications_DeduplicationKey unique where DeduplicationKey is not null
+```
+
+Notification queries must include `WorkspaceId` and the current authenticated `UserId`.

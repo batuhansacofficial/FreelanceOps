@@ -55,9 +55,9 @@ Infrastructure/
 The tests prioritize tenant isolation and authorization across:
 
 ```text
-Auth -> Workspace -> Client -> Proposal -> Project -> Task -> TimeEntry -> Invoice -> Report
+Auth -> Workspace -> Client -> Proposal -> Project -> Task -> TimeEntry -> Invoice -> Report -> Notification -> BackgroundJob
 ```
 
-The suite currently contains 84 tests, including 16 billing tests, 15 proposal tests, and 18 reporting tests. Proposal coverage verifies authorization, tenant isolation, totals, status transitions, expired acceptance rejection, soft delete, and convert-to-project rules. Reporting coverage verifies authorization, tenant isolation, dashboard metrics, payment-based revenue, multi-currency grouping, date validation, client summaries, and project performance.
+The suite currently contains 96 tests, including 16 billing tests, 15 proposal tests, 18 reporting tests, 6 notification endpoint tests, and 6 background job tests. Proposal coverage verifies authorization, tenant isolation, totals, status transitions, expired acceptance rejection, soft delete, and convert-to-project rules. Reporting coverage verifies authorization, tenant isolation, dashboard metrics, payment-based revenue, multi-currency grouping, date validation, client summaries, and project performance. Notification coverage verifies per-user visibility, unread counts, read operations, expired proposal processing, and overdue invoice notifications.
 
 They intentionally do not attempt exhaustive CRUD coverage. Financial reports are tested through the public HTTP routes against PostgreSQL.

@@ -1,8 +1,10 @@
 using FreelanceOps.Application.Abstractions.Authentication;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Workspaces;
 using FreelanceOps.Application.Common.Exceptions;
 using FreelanceOps.Application.Workspaces;
+using FreelanceOps.Domain.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreelanceOps.Application.Billing.SendInvoice;
@@ -10,7 +12,8 @@ namespace FreelanceOps.Application.Billing.SendInvoice;
 public sealed class SendInvoiceHandler(
     IApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
-    IWorkspaceAuthorizationService workspaceAuthorizationService)
+    IWorkspaceAuthorizationService workspaceAuthorizationService,
+    INotificationService notificationService)
 {
     public async Task Handle(
         SendInvoiceCommand command,
@@ -40,6 +43,17 @@ public sealed class SendInvoiceHandler(
         }
 
         invoice.MarkAsSent();
+
+        await notificationService.CreateForWorkspaceRolesAsync(
+            invoice.WorkspaceId,
+            WorkspaceRoles.Managers,
+            NotificationType.InvoiceSent,
+            "Invoice sent",
+            $"Invoice {invoice.InvoiceNumber} was sent.",
+            "Invoice",
+            invoice.Id,
+            $"invoice-sent:{invoice.Id}",
+            cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

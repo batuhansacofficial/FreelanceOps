@@ -152,6 +152,22 @@ public sealed class Proposal
         UpdatedAtUtc = DateTime.UtcNow;
     }
 
+    public void MarkExpired(DateOnly today)
+    {
+        if (Status != ProposalStatus.Sent)
+        {
+            throw new DomainException("Only sent proposals can expire.");
+        }
+
+        if (ValidUntil >= today)
+        {
+            throw new DomainException("Proposal has not expired yet.");
+        }
+
+        Status = ProposalStatus.Expired;
+        UpdatedAtUtc = DateTime.UtcNow;
+    }
+
     public void Cancel()
     {
         if (Status == ProposalStatus.Cancelled)

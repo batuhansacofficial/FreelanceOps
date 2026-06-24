@@ -1,10 +1,15 @@
 using FreelanceOps.Application.Abstractions.Authentication;
 using FreelanceOps.Application.Abstractions.Billing;
+using FreelanceOps.Application.Abstractions.Notifications;
 using FreelanceOps.Application.Abstractions.Persistence;
 using FreelanceOps.Application.Abstractions.Proposals;
 using FreelanceOps.Application.Abstractions.Workspaces;
+using FreelanceOps.Application.BackgroundJobs.ExpiredProposalJob;
+using FreelanceOps.Application.BackgroundJobs.OverdueInvoiceNotificationJob;
 using FreelanceOps.Infrastructure.Authentication;
+using FreelanceOps.Infrastructure.BackgroundJobs;
 using FreelanceOps.Infrastructure.Billing;
+using FreelanceOps.Infrastructure.Notifications;
 using FreelanceOps.Infrastructure.Persistence;
 using FreelanceOps.Infrastructure.Proposals;
 using FreelanceOps.Infrastructure.Workspaces;
@@ -39,6 +44,9 @@ public static class DependencyInjection
         services.AddScoped<IWorkspaceAccessService, WorkspaceAccessService>();
         services.AddScoped<IInvoiceNumberGenerator, InvoiceNumberGenerator>();
         services.AddScoped<IProposalNumberGenerator, ProposalNumberGenerator>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IExpiredProposalJob, ExpiredProposalJob>();
+        services.AddScoped<IOverdueInvoiceNotificationJob, OverdueInvoiceNotificationJob>();
 
         return services;
     }
