@@ -1,5 +1,6 @@
 using FreelanceOps.Domain.Billing;
 using FreelanceOps.Domain.Clients;
+using FreelanceOps.Domain.Notifications;
 using FreelanceOps.Domain.Projects;
 using FreelanceOps.Domain.Proposals;
 using FreelanceOps.Domain.TimeTracking;
@@ -36,6 +37,8 @@ public interface IApplicationDbContext
     DbSet<Proposal> Proposals { get; }
 
     DbSet<ProposalItem> ProposalItems { get; }
+
+    DbSet<Notification> Notifications { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
