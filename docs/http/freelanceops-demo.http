@@ -1,0 +1,53 @@
+@baseUrl = http://localhost:5244
+@workspaceId = replace-with-demo-workspace-id
+
+### Login demo user
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@freelanceops.dev",
+  "password": "Demo123!"
+}
+
+### Get demo workspaces
+# @name workspaces
+GET {{baseUrl}}/api/workspaces
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get dashboard
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/reports/dashboard
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get revenue report
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/reports/revenue?groupBy=month
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get client summary
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/reports/client-summary
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get project performance
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/reports/project-performance
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get clients
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/clients
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get projects
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/projects
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get invoices
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/invoices
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get notifications
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/notifications
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get unread notification count
+GET {{baseUrl}}/api/workspaces/{{workspaceId}}/notifications/unread-count
+Authorization: Bearer {{login.response.body.accessToken}}
