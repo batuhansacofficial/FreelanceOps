@@ -87,6 +87,31 @@ Run tests:
 dotnet test FreelanceOps.sln --configuration Release
 ```
 
+## Demo
+
+Demo seed data is available for local development.
+
+```bash
+dotnet tool restore
+docker compose up -d
+dotnet ef database update --project src/FreelanceOps.Infrastructure --startup-project src/FreelanceOps.Api
+dotnet run --project src/FreelanceOps.Api/FreelanceOps.Api.csproj
+```
+
+Demo credentials:
+
+```text
+Email: demo@freelanceops.dev
+Password: Demo123!
+```
+
+Demo notes and request flow:
+
+```text
+docs/demo.md
+docs/http/freelanceops-demo.http
+```
+
 Auth endpoints:
 
 ```text
