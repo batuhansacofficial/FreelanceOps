@@ -113,6 +113,10 @@ docs/demo.md
 docs/http/freelanceops-demo.http
 ```
 
+## Deployment
+
+Deployment readiness documentation is available in [docs/deployment.md](docs/deployment.md).
+
 Auth endpoints:
 
 ```text
