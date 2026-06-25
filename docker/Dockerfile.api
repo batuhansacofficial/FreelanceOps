@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY FreelanceOps.sln ./
+COPY src/FreelanceOps.Api/FreelanceOps.Api.csproj src/FreelanceOps.Api/
+COPY src/FreelanceOps.Application/FreelanceOps.Application.csproj src/FreelanceOps.Application/
+COPY src/FreelanceOps.Domain/FreelanceOps.Domain.csproj src/FreelanceOps.Domain/
+COPY src/FreelanceOps.Infrastructure/FreelanceOps.Infrastructure.csproj src/FreelanceOps.Infrastructure/
+
+RUN dotnet restore src/FreelanceOps.Api/FreelanceOps.Api.csproj
+
+COPY . .
+
+RUN dotnet publish src/FreelanceOps.Api/FreelanceOps.Api.csproj \
+    --configuration Release \
+    --output /app/publish \
+    --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "FreelanceOps.Api.dll"]
