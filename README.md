@@ -2,9 +2,18 @@
 
 Production-style multi-tenant SaaS backend for freelancers and small agencies.
 
-## Current Status
+## Project Summary
 
-Initial solution setup is in place:
+FreelanceOps is a backend-focused portfolio project that models the core
+operations of a small freelance business or agency: workspace membership,
+clients, projects, tasks, time tracking, proposals, invoicing, payments,
+reports, notifications, background jobs, demo seed data, and deployment-ready
+Docker packaging.
+
+The project is intentionally API-first. A frontend, real payment provider,
+email delivery, and live deployment are outside the current scope.
+
+## Features
 
 - ASP.NET Core Web API
 - Application, Domain, Infrastructure, and Worker projects
@@ -82,10 +91,24 @@ Health check:
 /health
 ```
 
-Run tests:
+## Running Tests
 
 ```bash
 dotnet test FreelanceOps.sln --configuration Release
+```
+
+## Docker Build
+
+Build the API image:
+
+```bash
+docker build -f docker/Dockerfile.api -t freelanceops-api:local .
+```
+
+Build the Worker image:
+
+```bash
+docker build -f docker/Dockerfile.worker -t freelanceops-worker:local .
 ```
 
 ## Demo
@@ -237,7 +260,8 @@ PATCH /api/workspaces/{workspaceId}/notifications/read-all
 
 ## Known Limitations
 
-- Workspace isolation exists for workspace, member, client, project, task, time-tracking, billing, proposal, and reporting endpoints.
+- This is a production-style backend, not a live production deployment.
+- Live deployment is not part of the current milestone set.
 - Invoice PDF export and external payment-provider integration are not implemented.
 - Invoice numbering uses a workspace/year count and is not safe for high-concurrency production workloads.
 - Proposal PDF export, public client approval portal, and email delivery are not implemented.
@@ -246,4 +270,6 @@ PATCH /api/workspaces/{workspaceId}/notifications/read-all
 - Multi-currency revenue is grouped without exchange-rate conversion.
 - Active timers are excluded from reports until stopped.
 - Real-time SignalR notification delivery, email sending, payment processing, and file storage are not implemented.
+- Observability is limited to logs and health checks.
+- Worker scheduling uses a simple interval-based hosted service, not a distributed scheduler.
 - Frontend is not part of the initial MVP.
