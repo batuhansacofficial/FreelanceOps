@@ -18,7 +18,7 @@ public sealed class CustomWebApplicationFactory
         .Build();
     private readonly Dictionary<string, string?> _originalEnvironmentValues = [];
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await _postgres.StartAsync();
         SetTestEnvironmentVariable("ConnectionStrings__Database", _postgres.GetConnectionString());
@@ -34,7 +34,7 @@ public sealed class CustomWebApplicationFactory
         await dbContext.Database.MigrateAsync();
     }
 
-    public new async Task DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         foreach (var (key, value) in _originalEnvironmentValues)
         {
@@ -42,6 +42,7 @@ public sealed class CustomWebApplicationFactory
         }
 
         await _postgres.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
