@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY FreelanceOps.sln ./
+COPY src/FreelanceOps.Worker/FreelanceOps.Worker.csproj src/FreelanceOps.Worker/
+COPY src/FreelanceOps.Application/FreelanceOps.Application.csproj src/FreelanceOps.Application/
+COPY src/FreelanceOps.Domain/FreelanceOps.Domain.csproj src/FreelanceOps.Domain/
+COPY src/FreelanceOps.Infrastructure/FreelanceOps.Infrastructure.csproj src/FreelanceOps.Infrastructure/
+
+RUN dotnet restore src/FreelanceOps.Worker/FreelanceOps.Worker.csproj
+
+COPY . .
+
+RUN dotnet publish src/FreelanceOps.Worker/FreelanceOps.Worker.csproj \
+    --configuration Release \
+    --output /app/publish \
+    --no-restore
+
+FROM mcr.microsoft.com/dotnet/runtime:10.0 AS runtime
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENTRYPOINT ["dotnet", "FreelanceOps.Worker.dll"]

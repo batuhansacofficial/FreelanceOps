@@ -1,9 +1,257 @@
 # Database Schema
 
-The initial EF Core `ApplicationDbContext` is configured for PostgreSQL and uses the default schema:
+The EF Core `ApplicationDbContext` is configured for PostgreSQL and uses the default schema:
 
 ```text
 freelance_ops
 ```
 
-No migrations exist yet. The first meaningful migration should be added when the first domain entities are introduced, starting with auth and workspace tables.
+Current migrations:
+
+```text
+20260614221112_AddIdentityTables
+20260615181616_AddWorkspaceTables
+20260615185834_AddClientTables
+20260616180417_AddProjectTables
+20260618133241_AddTimeTrackingTables
+20260619173150_AddBillingTables
+20260623165342_AddProposalTables
+20260624140422_AddNotificationTables
+```
+
+Client table:
+
+```text
+freelance_ops.clients
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+Name varchar(160) not null
+Email varchar(320) null
+CompanyName varchar(160) null
+Notes varchar(2000) null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_clients_WorkspaceId
+IX_clients_WorkspaceId_Email
+IX_clients_WorkspaceId_Name
+```
+
+Client queries must include `WorkspaceId` and `IsDeleted = false` unless the operation is an explicit administrative data-recovery task.
+
+Project table:
+
+```text
+freelance_ops.projects
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ClientId uuid not null
+Name varchar(160) not null
+Description varchar(4000) null
+Status varchar(32) not null
+StartDate date null
+Deadline date null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_projects_ClientId
+IX_projects_WorkspaceId
+IX_projects_WorkspaceId_Name
+IX_projects_WorkspaceId_Status
+```
+
+Project queries must include `WorkspaceId` and `IsDeleted = false`. Project creation must validate that `ClientId` belongs to the same workspace and is not deleted.
+
+Project task table:
+
+```text
+freelance_ops.project_tasks
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ProjectId uuid not null
+Title varchar(200) not null
+Description varchar(4000) null
+Status varchar(32) not null
+Priority varchar(32) not null
+DueDate date null
+AssignedToUserId uuid null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_project_tasks_AssignedToUserId
+IX_project_tasks_ProjectId
+IX_project_tasks_WorkspaceId
+IX_project_tasks_WorkspaceId_ProjectId_Status
+IX_project_tasks_WorkspaceId_Status
+```
+
+Task queries must include `WorkspaceId` and `IsDeleted = false`. Task creation must validate that `ProjectId` belongs to the same workspace and is not deleted. Task assignment must validate that `AssignedToUserId`, when provided, is an active member of the same workspace.
+
+Time entry table:
+
+```text
+freelance_ops.time_entries
+```
+
+Columns:
+
+```text
+Id uuid primary key
+WorkspaceId uuid not null
+ProjectId uuid not null
+TaskId uuid not null
+UserId uuid not null
+StartedAtUtc timestamptz not null
+EndedAtUtc timestamptz null
+DurationMinutes integer null
+Description varchar(2000) null
+Source varchar(32) not null
+CreatedAtUtc timestamptz not null
+UpdatedAtUtc timestamptz null
+IsDeleted boolean not null
+```
+
+Indexes:
+
+```text
+IX_time_entries_UserId_EndedAtUtc
+IX_time_entries_WorkspaceId
+IX_time_entries_WorkspaceId_ProjectId
+IX_time_entries_WorkspaceId_TaskId
+IX_time_entries_WorkspaceId_UserId
+```
+
+Time-entry lookups include `WorkspaceId` and `IsDeleted = false`. Timer/manual creation validates that the task and parent project are active members of the same workspace.
+
+Invoice table:
+
+```text
+freelance_ops.invoices
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+ClientId uuid not null
+ProjectId uuid null
+InvoiceNumber varchar(32) not null
+Status varchar(32) not null
+IssueDate date not null
+DueDate date not null
+Currency varchar(3) not null
+SubtotalAmount numeric(18,2) not null
+TaxAmount numeric(18,2) not null
+TotalAmount numeric(18,2) not null
+PaidAmount numeric(18,2) not null
+IsDeleted boolean not null
+```
+
+Invoice indexes:
+
+```text
+IX_invoices_WorkspaceId_ClientId
+IX_invoices_WorkspaceId_InvoiceNumber unique
+IX_invoices_WorkspaceId_ProjectId
+IX_invoices_WorkspaceId_Status
+```
+
+Invoice items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Payment amounts use `numeric(18,2)`. Invoice items and payment records cascade when their invoice is physically removed.
+
+Proposal table:
+
+```text
+freelance_ops.proposals
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+ClientId uuid not null
+ConvertedProjectId uuid null
+ProposalNumber varchar(32) not null
+Title varchar(200) not null
+Scope varchar(4000) not null
+Status varchar(32) not null
+ValidUntil date not null
+Currency varchar(3) not null
+SubtotalAmount numeric(18,2) not null
+TaxAmount numeric(18,2) not null
+TotalAmount numeric(18,2) not null
+IsDeleted boolean not null
+```
+
+Proposal indexes:
+
+```text
+IX_proposals_ConvertedProjectId unique where ConvertedProjectId is not null
+IX_proposals_WorkspaceId_ClientId
+IX_proposals_WorkspaceId_ProposalNumber unique
+IX_proposals_WorkspaceId_Status
+IX_proposals_WorkspaceId_Title
+```
+
+Proposal items use `numeric(18,2)` for quantity/prices/totals and `numeric(5,2)` for tax rate. Proposal items cascade when their proposal is physically removed.
+
+Notification table:
+
+```text
+freelance_ops.notifications
+```
+
+Important columns:
+
+```text
+WorkspaceId uuid not null
+UserId uuid not null
+Type varchar(64) not null
+Title varchar(200) not null
+Message varchar(1000) not null
+RelatedEntityType varchar(64) null
+RelatedEntityId uuid null
+DeduplicationKey varchar(200) null
+IsRead boolean not null
+CreatedAtUtc timestamptz not null
+ReadAtUtc timestamptz null
+```
+
+Notification indexes:
+
+```text
+IX_notifications_WorkspaceId_UserId_IsRead
+IX_notifications_WorkspaceId_UserId_CreatedAtUtc
+IX_notifications_DeduplicationKey unique where DeduplicationKey is not null
+```
+
+Notification queries must include `WorkspaceId` and the current authenticated `UserId`.
