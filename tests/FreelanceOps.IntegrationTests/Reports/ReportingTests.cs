@@ -22,7 +22,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             member.Email);
 
         var response = await memberClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -35,7 +35,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(ownerClient);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -77,7 +77,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             "Completed");
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.TotalClients.Should().Be(2);
@@ -107,7 +107,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             amount: 200m);
 
         var response = await setup.OwnerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.PaidRevenueThisMonth.Should().Be(200m);
@@ -134,7 +134,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             amount: 125m);
 
         var response = await setup.OwnerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.OutstandingInvoiceAmount.Should().Be(invoice.TotalAmount - 125m);
@@ -159,7 +159,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             invoice.InvoiceId);
 
         var response = await setup.OwnerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.OverdueInvoiceCount.Should().Be(1);
@@ -175,7 +175,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             setup.TaskId);
 
         var response = await setup.OwnerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{setup.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.TrackedMinutesThisMonth.Should().Be(0);
@@ -212,7 +212,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         var range = CurrentMonthRange();
         var response = await setup.OwnerClient.GetAsync(
             $"/api/workspaces/{setup.WorkspaceId}/reports/revenue" +
-            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}&groupBy=month");
+            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}&groupBy=month", TestContext.Current.CancellationToken);
         var report = await ReadAsAsync<RevenueReportTestResponse>(response);
 
         report.ItemsByCurrency.Should().ContainSingle(item =>
@@ -251,7 +251,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
 
         var response = await setup.OwnerClient.GetAsync(
             $"/api/workspaces/{setup.WorkspaceId}/reports/revenue" +
-            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}&groupBy=day");
+            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}&groupBy=day", TestContext.Current.CancellationToken);
         var report = await ReadAsAsync<RevenueReportTestResponse>(response);
 
         report.ItemsByCurrency.Should().ContainSingle();
@@ -291,7 +291,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         var range = CurrentMonthRange();
         var response = await ownerClient.GetAsync(
             $"/api/workspaces/{setupA.WorkspaceId}/reports/client-summary" +
-            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}");
+            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}", TestContext.Current.CancellationToken);
         var report = await ReadAsAsync<ClientSummaryTestResponse>(response);
 
         report.Items.Should().ContainSingle(item =>
@@ -328,7 +328,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         var range = CurrentMonthRange();
         var response = await setup.OwnerClient.GetAsync(
             $"/api/workspaces/{setup.WorkspaceId}/reports/project-performance" +
-            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}");
+            $"?from={range.From:yyyy-MM-dd}&to={range.To:yyyy-MM-dd}", TestContext.Current.CancellationToken);
         var report = await ReadAsAsync<ProjectPerformanceTestResponse>(response);
         var item = report.Items.Single(project => project.ProjectId == setup.ProjectId);
 
@@ -359,7 +359,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         foreach (var path in paths)
         {
             var response = await outsiderClient.GetAsync(
-                $"/api/workspaces/{workspace.WorkspaceId}/reports/{path}");
+                $"/api/workspaces/{workspace.WorkspaceId}/reports/{path}", TestContext.Current.CancellationToken);
 
             response.StatusCode.Should().Be(
                 HttpStatusCode.Forbidden,
@@ -386,7 +386,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             amount: 400m);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{setupA.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{setupA.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DashboardTestResponse>(response);
 
         dashboard.PaidRevenueThisMonth.Should().Be(0m);
@@ -408,7 +408,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
             role: "Admin");
 
         var response = await adminClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard");
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/dashboard", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -423,7 +423,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.GetAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue" +
-            $"?from={today:yyyy-MM-dd}&to={today.AddDays(-1):yyyy-MM-dd}");
+            $"?from={today:yyyy-MM-dd}&to={today.AddDays(-1):yyyy-MM-dd}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -439,7 +439,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.GetAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue" +
-            $"?to={previousMonthEnd:yyyy-MM-dd}");
+            $"?to={previousMonthEnd:yyyy-MM-dd}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -455,7 +455,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.GetAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue" +
-            $"?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}");
+            $"?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -468,7 +468,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
         var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(ownerClient);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue?groupBy=year");
+            $"/api/workspaces/{workspace.WorkspaceId}/reports/revenue?groupBy=year", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -512,7 +512,7 @@ public sealed class ReportingTests(CustomWebApplicationFactory factory)
     {
         var response = await client.PatchAsJsonAsync(
             $"/api/workspaces/{workspaceId}/projects/{projectId}/status",
-            new { Status = status });
+            new { Status = status }, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
     }

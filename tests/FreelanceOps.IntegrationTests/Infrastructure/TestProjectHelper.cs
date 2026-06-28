@@ -13,6 +13,7 @@ public static class TestProjectHelper
         Guid workspaceId,
         Guid clientId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/projects",
             new
@@ -22,11 +23,12 @@ public static class TestProjectHelper
                 Description = "Integration test project.",
                 StartDate = "2026-06-16",
                 Deadline = "2026-07-16"
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateProjectTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateProjectTestResponse>(cancellationToken);
 
         if (result is null)
         {
@@ -42,6 +44,7 @@ public static class TestProjectHelper
         Guid projectId,
         Guid? assignedToUserId = null)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/projects/{projectId}/tasks",
             new
@@ -51,11 +54,12 @@ public static class TestProjectHelper
                 Priority = "High",
                 DueDate = "2026-06-30",
                 AssignedToUserId = assignedToUserId
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateTaskTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateTaskTestResponse>(cancellationToken);
 
         if (result is null)
         {

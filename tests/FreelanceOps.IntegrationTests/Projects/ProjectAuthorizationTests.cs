@@ -18,7 +18,7 @@ public sealed class ProjectAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/projects",
-            CreateProjectRequest(client.ClientId));
+            CreateProjectRequest(client.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -34,7 +34,7 @@ public sealed class ProjectAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspaceA.WorkspaceId}/projects",
-            CreateProjectRequest(clientB.ClientId));
+            CreateProjectRequest(clientB.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -52,7 +52,7 @@ public sealed class ProjectAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await memberClient.PostAsJsonAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/projects",
-            CreateProjectRequest(client.ClientId));
+            CreateProjectRequest(client.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -71,7 +71,7 @@ public sealed class ProjectAuthorizationTests(CustomWebApplicationFactory factor
             clientA.ClientId);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspaceB.WorkspaceId}/projects/{projectA.ProjectId}");
+            $"/api/workspaces/{workspaceB.WorkspaceId}/projects/{projectA.ProjectId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

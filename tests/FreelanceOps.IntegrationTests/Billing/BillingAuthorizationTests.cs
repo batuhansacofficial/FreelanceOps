@@ -17,7 +17,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices",
-            TestBillingHelper.CreateInvoiceRequest(setup.ClientId, setup.ProjectId));
+            TestBillingHelper.CreateInvoiceRequest(setup.ClientId, setup.ProjectId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -34,7 +34,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await memberClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices",
-            TestBillingHelper.CreateInvoiceRequest(setup.ClientId, setup.ProjectId));
+            TestBillingHelper.CreateInvoiceRequest(setup.ClientId, setup.ProjectId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -50,7 +50,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspaceA.WorkspaceId}/invoices",
-            TestBillingHelper.CreateInvoiceRequest(clientB.ClientId));
+            TestBillingHelper.CreateInvoiceRequest(clientB.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -65,7 +65,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setupA.WorkspaceId}/invoices",
-            TestBillingHelper.CreateInvoiceRequest(setupA.ClientId, setupB.ProjectId));
+            TestBillingHelper.CreateInvoiceRequest(setupA.ClientId, setupB.ProjectId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -85,7 +85,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/invoices",
-            TestBillingHelper.CreateInvoiceRequest(clientB.ClientId, projectA.ProjectId));
+            TestBillingHelper.CreateInvoiceRequest(clientB.ClientId, projectA.ProjectId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -104,7 +104,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
                 setup.ProjectId,
                 quantity: 2m,
                 unitPrice: 100m,
-                taxRate: 20m));
+                taxRate: 20m), TestContext.Current.CancellationToken);
         var invoice = await ReadAsAsync<InvoiceTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -150,9 +150,9 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var sendResponse = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/send",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<InvoiceTestResponse>(detailResponse);
 
         sendResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -172,11 +172,11 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
             setup.ProjectId);
         await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/send",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments",
-            PaymentRequest(invoice.TotalAmount));
+            PaymentRequest(invoice.TotalAmount), TestContext.Current.CancellationToken);
         var payment = await ReadAsAsync<PaymentTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -199,7 +199,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments",
-            PaymentRequest(invoice.TotalAmount + 1m));
+            PaymentRequest(invoice.TotalAmount + 1m), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -217,11 +217,11 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
             setup.ProjectId);
         await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments",
-            PaymentRequest(invoice.TotalAmount));
+            PaymentRequest(invoice.TotalAmount), TestContext.Current.CancellationToken);
 
         var response = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/cancel",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -239,9 +239,9 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
             setup.ProjectId);
 
         var deleteResponse = await ownerClient.DeleteAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}", TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}", TestContext.Current.CancellationToken);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         detailResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -266,7 +266,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
             setupB.ProjectId);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{setupA.WorkspaceId}/invoices?pageSize=100");
+            $"/api/workspaces/{setupA.WorkspaceId}/invoices?pageSize=100", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<InvoiceListItem>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -285,7 +285,7 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
         await TestWorkspaceHelper.AddMemberAsync(ownerClient, setup.WorkspaceId, member.Email);
 
         var response = await memberClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -310,10 +310,10 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
             setup.ProjectId);
         var paymentResponse = await adminClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments",
-            PaymentRequest(100m));
+            PaymentRequest(100m), TestContext.Current.CancellationToken);
 
         var listResponse = await adminClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}/payments", TestContext.Current.CancellationToken);
         var payments = await ReadAsAsync<IReadOnlyCollection<PaymentRecordTestResponse>>(listResponse);
 
         paymentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -351,9 +351,9 @@ public sealed class BillingAuthorizationTests(CustomWebApplicationFactory factor
                         TaxRate = 10m
                     }
                 }
-            });
+            }, TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<InvoiceTestResponse>(detailResponse);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);

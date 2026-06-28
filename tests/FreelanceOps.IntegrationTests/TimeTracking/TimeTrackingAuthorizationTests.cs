@@ -20,7 +20,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
             new
             {
                 Description = "Starting timer."
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -38,7 +38,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
             new
             {
                 Description = "Cross-workspace timer."
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -57,7 +57,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
             new
             {
                 Description = "Second active timer."
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
@@ -75,7 +75,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
 
         var response = await ownerClient.PostAsync(
             $"/api/workspaces/{setup.WorkspaceId}/time-entries/{timeEntry.TimeEntryId}/stop",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -96,7 +96,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
 
         var response = await memberClient.PostAsync(
             $"/api/workspaces/{setup.WorkspaceId}/time-entries/{timeEntry.TimeEntryId}/stop",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -110,7 +110,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/tasks/{setup.TaskId}/time-entries/manual",
-            ManualEntryRequest(90));
+            ManualEntryRequest(90), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -124,7 +124,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/tasks/{setup.TaskId}/time-entries/manual",
-            ManualEntryRequest(0));
+            ManualEntryRequest(0), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -142,7 +142,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
         await TestTimeEntryHelper.CreateManualAsync(memberClient, setup.WorkspaceId, setup.TaskId, 45);
 
         var response = await memberClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/time-entries?userId={owner.UserId}");
+            $"/api/workspaces/{setup.WorkspaceId}/time-entries?userId={owner.UserId}", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<TimeEntryListItem>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -167,7 +167,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
         await TestTimeEntryHelper.CreateManualAsync(adminClient, setup.WorkspaceId, setup.TaskId, 45);
 
         var response = await adminClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/time-entries");
+            $"/api/workspaces/{setup.WorkspaceId}/time-entries", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<TimeEntryListItem>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -188,7 +188,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
         await TestTimeEntryHelper.CreateManualAsync(memberClient, setup.WorkspaceId, setup.TaskId, 90);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/reports/time-summary");
+            $"/api/workspaces/{setup.WorkspaceId}/reports/time-summary", TestContext.Current.CancellationToken);
         var summary = await ReadAsAsync<TimeSummaryTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -214,9 +214,9 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
             30);
 
         var deleteResponse = await ownerClient.DeleteAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/time-entries/{timeEntry.TimeEntryId}");
+            $"/api/workspaces/{setup.WorkspaceId}/time-entries/{timeEntry.TimeEntryId}", TestContext.Current.CancellationToken);
         var listResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/time-entries");
+            $"/api/workspaces/{setup.WorkspaceId}/time-entries", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<TimeEntryListItem>>(listResponse);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -242,9 +242,9 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
                 StartedAtUtc = DateTime.UtcNow.AddHours(-4),
                 DurationMinutes = 120,
                 Description = "Updated manual entry."
-            });
+            }, TestContext.Current.CancellationToken);
         var listResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/time-entries");
+            $"/api/workspaces/{setup.WorkspaceId}/time-entries", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<TimeEntryListItem>>(listResponse);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -275,7 +275,7 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
                 StartedAtUtc = DateTime.UtcNow.AddHours(-4),
                 DurationMinutes = 120,
                 Description = "Unauthorized update."
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -287,14 +287,14 @@ public sealed class TimeTrackingAuthorizationTests(CustomWebApplicationFactory f
         using var ownerClient = CreateAuthenticatedClient(owner);
         var setup = await CreateTaskSetupAsync(ownerClient);
         var deleteResponse = await ownerClient.DeleteAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/tasks/{setup.TaskId}");
+            $"/api/workspaces/{setup.WorkspaceId}/tasks/{setup.TaskId}", TestContext.Current.CancellationToken);
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/tasks/{setup.TaskId}/time-entries/start",
             new
             {
                 Description = "Deleted task timer."
-            });
+            }, TestContext.Current.CancellationToken);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

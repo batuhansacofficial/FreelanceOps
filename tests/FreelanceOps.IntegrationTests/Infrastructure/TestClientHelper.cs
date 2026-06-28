@@ -10,6 +10,7 @@ public static class TestClientHelper
         HttpClient client,
         Guid workspaceId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/clients",
             new
@@ -18,11 +19,12 @@ public static class TestClientHelper
                 Email = $"client-{Guid.NewGuid():N}@example.com",
                 CompanyName = "Test Company",
                 Notes = "Integration test client."
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateClientTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateClientTestResponse>(cancellationToken);
 
         if (result is null)
         {

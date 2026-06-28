@@ -19,7 +19,7 @@ public sealed class TaskAuthorizationTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/projects/{setup.ProjectId}/tasks",
-            CreateTaskRequest(member.UserId));
+            CreateTaskRequest(member.UserId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -34,7 +34,7 @@ public sealed class TaskAuthorizationTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/projects/{setup.ProjectId}/tasks",
-            CreateTaskRequest(outsider.UserId));
+            CreateTaskRequest(outsider.UserId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -49,7 +49,7 @@ public sealed class TaskAuthorizationTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspaceB.WorkspaceId}/projects/{setup.ProjectId}/tasks",
-            CreateTaskRequest(null));
+            CreateTaskRequest(null), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -74,7 +74,7 @@ public sealed class TaskAuthorizationTests(CustomWebApplicationFactory factory)
             new
             {
                 Status = "InProgress"
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -94,7 +94,7 @@ public sealed class TaskAuthorizationTests(CustomWebApplicationFactory factory)
             new
             {
                 Status = "Active"
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }

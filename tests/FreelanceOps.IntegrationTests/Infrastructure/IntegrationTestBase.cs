@@ -28,7 +28,7 @@ public abstract class IntegrationTestBase
 
     protected static async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
     {
-        var result = await response.Content.ReadFromJsonAsync<T>();
+        var result = await response.Content.ReadFromJsonAsync<T>(TestContext.Current.CancellationToken);
 
         if (result is null)
         {

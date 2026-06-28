@@ -30,7 +30,7 @@ public sealed class BackgroundJobTests(CustomWebApplicationFactory factory)
         await ExecuteExpiredProposalJobAsync();
 
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<ProposalDetailResponse>(detailResponse);
         detail.Status.Should().Be("Expired");
     }
@@ -127,7 +127,7 @@ public sealed class BackgroundJobTests(CustomWebApplicationFactory factory)
         await ExecuteOverdueInvoiceJobAsync();
 
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}");
+            $"/api/workspaces/{setup.WorkspaceId}/invoices/{invoice.InvoiceId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<InvoiceDetailResponse>(detailResponse);
 
         detail.Status.Should().Be(nameof(InvoiceStatus.Sent));
@@ -183,7 +183,7 @@ public sealed class BackgroundJobTests(CustomWebApplicationFactory factory)
         return await dbContext.Notifications.CountAsync(notification =>
             notification.WorkspaceId == workspaceId &&
             notification.Type == type &&
-            notification.RelatedEntityId == relatedEntityId);
+            notification.RelatedEntityId == relatedEntityId, TestContext.Current.CancellationToken);
     }
 
     private static async Task<PagedResult<NotificationListItem>> GetNotificationsAsync(
@@ -191,10 +191,10 @@ public sealed class BackgroundJobTests(CustomWebApplicationFactory factory)
         Guid workspaceId)
     {
         var response = await client.GetAsync(
-            $"/api/workspaces/{workspaceId}/notifications?pageSize=100");
+            $"/api/workspaces/{workspaceId}/notifications?pageSize=100", TestContext.Current.CancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<PagedResult<NotificationListItem>>();
+        var result = await response.Content.ReadFromJsonAsync<PagedResult<NotificationListItem>>(TestContext.Current.CancellationToken);
 
         if (result is null)
         {

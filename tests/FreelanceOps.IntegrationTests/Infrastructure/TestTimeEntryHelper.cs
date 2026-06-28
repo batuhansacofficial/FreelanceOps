@@ -11,16 +11,18 @@ public static class TestTimeEntryHelper
         Guid workspaceId,
         Guid taskId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/start",
             new
             {
                 Description = "Integration test timer."
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<TimeEntryTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<TimeEntryTestResponse>(cancellationToken);
 
         if (result is null)
         {
@@ -37,6 +39,7 @@ public static class TestTimeEntryHelper
         int durationMinutes = 60,
         DateTime? startedAtUtc = null)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/tasks/{taskId}/time-entries/manual",
             new
@@ -44,11 +47,12 @@ public static class TestTimeEntryHelper
                 StartedAtUtc = startedAtUtc ?? DateTime.UtcNow.AddHours(-2),
                 DurationMinutes = durationMinutes,
                 Description = "Integration test manual entry."
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<TimeEntryTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<TimeEntryTestResponse>(cancellationToken);
 
         if (result is null)
         {

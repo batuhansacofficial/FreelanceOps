@@ -14,16 +14,18 @@ public static class TestWorkspaceHelper
 {
     public static async Task<TestWorkspaceContext> CreateWorkspaceAsync(HttpClient client)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             "/api/workspaces",
             new
             {
                 Name = $"Workspace {Guid.NewGuid():N}"
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateWorkspaceTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateWorkspaceTestResponse>(cancellationToken);
 
         if (result is null)
         {
@@ -39,17 +41,19 @@ public static class TestWorkspaceHelper
         string email,
         string role = "Member")
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/members",
             new
             {
                 Email = email,
                 Role = role
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<WorkspaceMemberTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<WorkspaceMemberTestResponse>(cancellationToken);
 
         if (result is null)
         {
