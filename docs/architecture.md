@@ -20,6 +20,6 @@ FreelanceOps.Worker
 - `Api` exposes HTTP endpoints and composes application services.
 - `Worker` hosts background jobs and reuses application/infrastructure registrations.
 
-## First Milestone
+## Security Foundation
 
-Auth and workspace isolation must be implemented before client, project, task, invoice, or report modules. Otherwise the project becomes ordinary CRUD and tenant isolation has to be retrofitted later.
+Authentication and workspace isolation are shared foundations for the business modules. Client, project, task, invoice, report, proposal, and notification flows use workspace-scoped access checks instead of relying on standalone CRUD endpoints.
