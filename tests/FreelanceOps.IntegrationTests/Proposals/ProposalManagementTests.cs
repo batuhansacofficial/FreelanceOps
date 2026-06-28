@@ -20,7 +20,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals",
-            TestProposalHelper.CreateProposalRequest(setup.ClientId));
+            TestProposalHelper.CreateProposalRequest(setup.ClientId), TestContext.Current.CancellationToken);
         var proposal = await ReadAsAsync<ProposalTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -40,7 +40,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await memberClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals",
-            TestProposalHelper.CreateProposalRequest(setup.ClientId));
+            TestProposalHelper.CreateProposalRequest(setup.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -56,7 +56,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspaceA.WorkspaceId}/proposals",
-            TestProposalHelper.CreateProposalRequest(clientB.ClientId));
+            TestProposalHelper.CreateProposalRequest(clientB.ClientId), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -74,7 +74,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
                 setup.ClientId,
                 quantity: 2m,
                 unitPrice: 100m,
-                taxRate: 20m));
+                taxRate: 20m), TestContext.Current.CancellationToken);
         var proposal = await ReadAsAsync<ProposalTestResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -100,7 +100,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
             setupB.ClientId);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{setupA.WorkspaceId}/proposals?pageSize=100");
+            $"/api/workspaces/{setupA.WorkspaceId}/proposals?pageSize=100", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<ProposalListItem>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -122,7 +122,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PutAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}",
-            TestProposalHelper.UpdateProposalRequest());
+            TestProposalHelper.UpdateProposalRequest(), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -140,9 +140,9 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var sendResponse = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/send",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<ProposalTestResponse>(detailResponse);
 
         sendResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -161,7 +161,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposalId}/send",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -180,9 +180,9 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var acceptResponse = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/accept",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<ProposalTestResponse>(detailResponse);
 
         acceptResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -204,7 +204,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/accept",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -223,9 +223,9 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var rejectResponse = await ownerClient.PatchAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/reject",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
         var detail = await ReadAsAsync<ProposalTestResponse>(detailResponse);
 
         rejectResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -248,7 +248,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/convert-to-project",
-            ConvertRequest());
+            ConvertRequest(), TestContext.Current.CancellationToken);
         var project = await ReadAsAsync<ConvertToProjectResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -270,7 +270,7 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/convert-to-project",
-            ConvertRequest());
+            ConvertRequest(), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -289,11 +289,11 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
         await TestProposalHelper.AcceptProposalAsync(ownerClient, setup.WorkspaceId, proposal.ProposalId);
         var firstResponse = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/convert-to-project",
-            ConvertRequest());
+            ConvertRequest(), TestContext.Current.CancellationToken);
 
         var secondResponse = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}/convert-to-project",
-            ConvertRequest());
+            ConvertRequest(), TestContext.Current.CancellationToken);
 
         firstResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         secondResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -311,9 +311,9 @@ public sealed class ProposalManagementTests(CustomWebApplicationFactory factory)
             setup.ClientId);
 
         var deleteResponse = await ownerClient.DeleteAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
         var detailResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}");
+            $"/api/workspaces/{setup.WorkspaceId}/proposals/{proposal.ProposalId}", TestContext.Current.CancellationToken);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         detailResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);

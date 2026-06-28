@@ -15,7 +15,7 @@ public sealed class WorkspaceAuthorizationTests(CustomWebApplicationFactory fact
         using var userClient = CreateAuthenticatedClient(user);
         var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(userClient);
 
-        var response = await userClient.GetAsync($"/api/workspaces/{workspace.WorkspaceId}/members");
+        var response = await userClient.GetAsync($"/api/workspaces/{workspace.WorkspaceId}/members", TestContext.Current.CancellationToken);
         var members = await ReadAsAsync<IReadOnlyCollection<WorkspaceMemberTestResponse>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -33,7 +33,7 @@ public sealed class WorkspaceAuthorizationTests(CustomWebApplicationFactory fact
         using var outsiderClient = CreateAuthenticatedClient(outsider);
         var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(ownerClient);
 
-        var response = await outsiderClient.GetAsync($"/api/workspaces/{workspace.WorkspaceId}");
+        var response = await outsiderClient.GetAsync($"/api/workspaces/{workspace.WorkspaceId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -55,7 +55,7 @@ public sealed class WorkspaceAuthorizationTests(CustomWebApplicationFactory fact
             {
                 Email = target.Email,
                 Role = "Member"
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }

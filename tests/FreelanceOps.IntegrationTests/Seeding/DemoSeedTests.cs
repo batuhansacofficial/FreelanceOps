@@ -25,7 +25,7 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var user = await dbContext.Users.SingleAsync(
-            existingUser => existingUser.Email == User.NormalizeEmail(DemoDataSeeder.DemoEmail));
+            existingUser => existingUser.Email == User.NormalizeEmail(DemoDataSeeder.DemoEmail), TestContext.Current.CancellationToken);
 
         result.UserId.Should().Be(user.Id);
         user.Email.Should().Be("demo@freelanceops.dev");
@@ -43,11 +43,11 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var workspace = await dbContext.Workspaces.SingleAsync(
-            existingWorkspace => existingWorkspace.Slug == DemoDataSeeder.DemoWorkspaceSlug);
+            existingWorkspace => existingWorkspace.Slug == DemoDataSeeder.DemoWorkspaceSlug, TestContext.Current.CancellationToken);
         var ownerMember = await dbContext.WorkspaceMembers.SingleAsync(
             member =>
                 member.WorkspaceId == workspace.Id &&
-                member.UserId == result.UserId);
+                member.UserId == result.UserId, TestContext.Current.CancellationToken);
 
         result.WorkspaceId.Should().Be(workspace.Id);
         workspace.Name.Should().Be("FreelanceOps Demo Workspace");
@@ -70,21 +70,21 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
         second.WorkspaceId.Should().Be(first.WorkspaceId);
         (await CountDemoUsersAsync(dbContext)).Should().Be(1);
         (await CountDemoWorkspacesAsync(dbContext)).Should().Be(1);
-        (await dbContext.Clients.CountAsync(client => client.WorkspaceId == first.WorkspaceId))
+        (await dbContext.Clients.CountAsync(client => client.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(2);
-        (await dbContext.Projects.CountAsync(project => project.WorkspaceId == first.WorkspaceId))
+        (await dbContext.Projects.CountAsync(project => project.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(3);
-        (await dbContext.ProjectTasks.CountAsync(task => task.WorkspaceId == first.WorkspaceId))
+        (await dbContext.ProjectTasks.CountAsync(task => task.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(10);
-        (await dbContext.TimeEntries.CountAsync(entry => entry.WorkspaceId == first.WorkspaceId))
+        (await dbContext.TimeEntries.CountAsync(entry => entry.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(9);
-        (await dbContext.Invoices.CountAsync(invoice => invoice.WorkspaceId == first.WorkspaceId))
+        (await dbContext.Invoices.CountAsync(invoice => invoice.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(2);
-        (await dbContext.Proposals.CountAsync(proposal => proposal.WorkspaceId == first.WorkspaceId))
+        (await dbContext.Proposals.CountAsync(proposal => proposal.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(2);
-        (await dbContext.Notifications.CountAsync(notification => notification.WorkspaceId == first.WorkspaceId))
+        (await dbContext.Notifications.CountAsync(notification => notification.WorkspaceId == first.WorkspaceId, TestContext.Current.CancellationToken))
             .Should().Be(3);
-        (await dbContext.PaymentRecords.CountAsync())
+        (await dbContext.PaymentRecords.CountAsync(TestContext.Current.CancellationToken))
             .Should().Be(2);
     }
 
@@ -97,13 +97,13 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var clients = await dbContext.Clients
             .Where(client => client.WorkspaceId == result.WorkspaceId)
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
         var projects = await dbContext.Projects
             .Where(project => project.WorkspaceId == result.WorkspaceId)
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
         var tasks = await dbContext.ProjectTasks
             .Where(task => task.WorkspaceId == result.WorkspaceId)
-            .ToListAsync();
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         clients.Should().HaveCount(2);
         clients.Select(client => client.Name).Should()
@@ -127,25 +127,25 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
         await SeedFreshAsync();
         var demoUser = await LoginDemoUserAsync();
         using var demoClient = CreateAuthenticatedClient(demoUser);
-        var workspacesResponse = await demoClient.GetAsync("/api/workspaces");
+        var workspacesResponse = await demoClient.GetAsync("/api/workspaces", TestContext.Current.CancellationToken);
         var workspaces = await ReadAsAsync<IReadOnlyCollection<WorkspaceListItem>>(workspacesResponse);
         var workspace = workspaces.Single(item => item.Slug == DemoDataSeeder.DemoWorkspaceSlug);
 
         var dashboardResponse = await demoClient.GetAsync(
-            $"/api/workspaces/{workspace.Id}/reports/dashboard");
+            $"/api/workspaces/{workspace.Id}/reports/dashboard", TestContext.Current.CancellationToken);
         var dashboard = await ReadAsAsync<DemoDashboardResponse>(dashboardResponse);
         var revenueResponse = await demoClient.GetAsync(
-            $"/api/workspaces/{workspace.Id}/reports/revenue");
+            $"/api/workspaces/{workspace.Id}/reports/revenue", TestContext.Current.CancellationToken);
         var revenue = await ReadAsAsync<DemoRevenueResponse>(revenueResponse);
         var clientSummaryResponse = await demoClient.GetAsync(
-            $"/api/workspaces/{workspace.Id}/reports/client-summary");
+            $"/api/workspaces/{workspace.Id}/reports/client-summary", TestContext.Current.CancellationToken);
         var clientSummary = await ReadAsAsync<DemoClientSummaryResponse>(clientSummaryResponse);
         var projectPerformanceResponse = await demoClient.GetAsync(
-            $"/api/workspaces/{workspace.Id}/reports/project-performance");
+            $"/api/workspaces/{workspace.Id}/reports/project-performance", TestContext.Current.CancellationToken);
         var projectPerformance =
             await ReadAsAsync<DemoProjectPerformanceResponse>(projectPerformanceResponse);
         var notificationsResponse = await demoClient.GetAsync(
-            $"/api/workspaces/{workspace.Id}/notifications");
+            $"/api/workspaces/{workspace.Id}/notifications", TestContext.Current.CancellationToken);
         var notifications = await ReadAsAsync<DemoNotificationPageResponse>(notificationsResponse);
 
         dashboardResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -203,12 +203,12 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
             {
                 Email = DemoDataSeeder.DemoEmail,
                 Password = DemoDataSeeder.DemoPassword
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
 
         var loginResult = await response.Content
-            .ReadFromJsonAsync<TestAuthHelper.LoginTestResponse>();
+            .ReadFromJsonAsync<TestAuthHelper.LoginTestResponse>(TestContext.Current.CancellationToken);
 
         if (loginResult is null)
         {
@@ -225,13 +225,13 @@ public sealed class DemoSeedTests(CustomWebApplicationFactory factory)
     private static async Task<int> CountDemoUsersAsync(ApplicationDbContext dbContext)
     {
         return await dbContext.Users.CountAsync(
-            user => user.Email == User.NormalizeEmail(DemoDataSeeder.DemoEmail));
+            user => user.Email == User.NormalizeEmail(DemoDataSeeder.DemoEmail), TestContext.Current.CancellationToken);
     }
 
     private static async Task<int> CountDemoWorkspacesAsync(ApplicationDbContext dbContext)
     {
         return await dbContext.Workspaces.CountAsync(
-            workspace => workspace.Slug == DemoDataSeeder.DemoWorkspaceSlug);
+            workspace => workspace.Slug == DemoDataSeeder.DemoWorkspaceSlug, TestContext.Current.CancellationToken);
     }
 
     private sealed record WorkspaceListItem(

@@ -23,6 +23,7 @@ public static class TestBillingHelper
         DateOnly? dueDate = null,
         string currency = "USD")
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/invoices",
             CreateInvoiceRequest(
@@ -33,11 +34,12 @@ public static class TestBillingHelper
                 taxRate,
                 issueDate,
                 dueDate,
-                currency));
+                currency),
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateInvoiceTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateInvoiceTestResponse>(cancellationToken);
 
         if (result is null)
         {
@@ -88,9 +90,11 @@ public static class TestBillingHelper
         Guid workspaceId,
         Guid invoiceId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PatchAsync(
             $"/api/workspaces/{workspaceId}/invoices/{invoiceId}/send",
-            content: null);
+            content: null,
+            cancellationToken: cancellationToken);
 
         response.EnsureSuccessStatusCode();
     }
@@ -102,6 +106,7 @@ public static class TestBillingHelper
         decimal amount,
         DateOnly? paidAt = null)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/invoices/{invoiceId}/payments",
             new
@@ -110,11 +115,12 @@ public static class TestBillingHelper
                 Method = "BankTransfer",
                 Reference = $"TRX-{Guid.NewGuid():N}",
                 PaidAt = paidAt ?? DateOnly.FromDateTime(DateTime.UtcNow)
-            });
+            },
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<PaymentTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<PaymentTestResponse>(cancellationToken);
 
         if (result is null)
         {

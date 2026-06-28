@@ -20,6 +20,7 @@ public static class TestProposalHelper
         decimal taxRate = 0m,
         string currency = "USD")
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             $"/api/workspaces/{workspaceId}/proposals",
             CreateProposalRequest(
@@ -29,11 +30,12 @@ public static class TestProposalHelper
                 quantity,
                 unitPrice,
                 taxRate,
-                currency));
+                currency),
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<CreateProposalTestResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CreateProposalTestResponse>(cancellationToken);
 
         if (result is null)
         {
@@ -106,9 +108,11 @@ public static class TestProposalHelper
         Guid workspaceId,
         Guid proposalId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PatchAsync(
             $"/api/workspaces/{workspaceId}/proposals/{proposalId}/send",
-            content: null);
+            content: null,
+            cancellationToken: cancellationToken);
 
         response.EnsureSuccessStatusCode();
     }
@@ -118,9 +122,11 @@ public static class TestProposalHelper
         Guid workspaceId,
         Guid proposalId)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var response = await client.PatchAsync(
             $"/api/workspaces/{workspaceId}/proposals/{proposalId}/accept",
-            content: null);
+            content: null,
+            cancellationToken: cancellationToken);
 
         response.EnsureSuccessStatusCode();
     }
