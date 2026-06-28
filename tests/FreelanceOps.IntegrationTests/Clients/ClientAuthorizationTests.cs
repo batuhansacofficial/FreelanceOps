@@ -17,7 +17,7 @@ public sealed class ClientAuthorizationTests(CustomWebApplicationFactory factory
 
         var response = await ownerClient.PostAsJsonAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/clients",
-            CreateClientRequest());
+            CreateClientRequest(), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -34,7 +34,7 @@ public sealed class ClientAuthorizationTests(CustomWebApplicationFactory factory
 
         var response = await memberClient.PostAsJsonAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/clients",
-            CreateClientRequest());
+            CreateClientRequest(), TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -49,7 +49,7 @@ public sealed class ClientAuthorizationTests(CustomWebApplicationFactory factory
         var client = await TestClientHelper.CreateClientAsync(ownerClient, workspaceA.WorkspaceId);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspaceB.WorkspaceId}/clients/{client.ClientId}");
+            $"/api/workspaces/{workspaceB.WorkspaceId}/clients/{client.ClientId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -63,9 +63,9 @@ public sealed class ClientAuthorizationTests(CustomWebApplicationFactory factory
         var client = await TestClientHelper.CreateClientAsync(ownerClient, workspace.WorkspaceId);
 
         var deleteResponse = await ownerClient.DeleteAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/clients/{client.ClientId}");
+            $"/api/workspaces/{workspace.WorkspaceId}/clients/{client.ClientId}", TestContext.Current.CancellationToken);
         var listResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/clients");
+            $"/api/workspaces/{workspace.WorkspaceId}/clients", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<ClientSummaryResponse>>(listResponse);
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);

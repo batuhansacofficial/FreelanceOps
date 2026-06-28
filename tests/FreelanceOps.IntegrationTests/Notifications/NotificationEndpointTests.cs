@@ -29,7 +29,7 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
             NotificationType.InvoiceSent);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/notifications?pageSize=100");
+            $"/api/workspaces/{workspace.WorkspaceId}/notifications?pageSize=100", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<NotificationListItem>>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -47,7 +47,7 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
         var workspace = await TestWorkspaceHelper.CreateWorkspaceAsync(ownerClient);
 
         var response = await outsiderClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/notifications");
+            $"/api/workspaces/{workspace.WorkspaceId}/notifications", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -70,7 +70,7 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
         await SeedNotificationAsync(workspace.WorkspaceId, member.UserId, NotificationType.InvoiceOverdue);
 
         var response = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/notifications/unread-count");
+            $"/api/workspaces/{workspace.WorkspaceId}/notifications/unread-count", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<UnreadCountResponse>(response);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -90,9 +90,9 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
 
         var markResponse = await ownerClient.PatchAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/notifications/{notificationId}/read",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var listResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/notifications?pageSize=100");
+            $"/api/workspaces/{workspace.WorkspaceId}/notifications?pageSize=100", TestContext.Current.CancellationToken);
         var result = await ReadAsAsync<PagedResult<NotificationListItem>>(listResponse);
 
         markResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -114,7 +114,7 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PatchAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/notifications/{memberNotificationId}/read",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -136,9 +136,9 @@ public sealed class NotificationEndpointTests(CustomWebApplicationFactory factor
 
         var response = await ownerClient.PatchAsync(
             $"/api/workspaces/{workspace.WorkspaceId}/notifications/read-all",
-            content: null);
+            content: null, cancellationToken: TestContext.Current.CancellationToken);
         var unreadResponse = await ownerClient.GetAsync(
-            $"/api/workspaces/{workspace.WorkspaceId}/notifications/unread-count");
+            $"/api/workspaces/{workspace.WorkspaceId}/notifications/unread-count", TestContext.Current.CancellationToken);
         var unread = await ReadAsAsync<UnreadCountResponse>(unreadResponse);
         var memberNotificationIsRead = await IsNotificationReadAsync(memberNotificationId);
 

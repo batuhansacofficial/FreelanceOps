@@ -12,6 +12,7 @@ public static class TestAuthHelper
 {
     public static async Task<TestUserContext> RegisterAndLoginAsync(HttpClient client)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var email = $"user-{Guid.NewGuid():N}@example.com";
         const string password = "Password123!";
 
@@ -22,7 +23,8 @@ public static class TestAuthHelper
                 Email = email,
                 Password = password,
                 FullName = "Test User"
-            });
+            },
+            cancellationToken);
 
         registerResponse.EnsureSuccessStatusCode();
 
@@ -32,11 +34,12 @@ public static class TestAuthHelper
             {
                 Email = email,
                 Password = password
-            });
+            },
+            cancellationToken);
 
         loginResponse.EnsureSuccessStatusCode();
 
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginTestResponse>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginTestResponse>(cancellationToken);
 
         if (loginResult is null)
         {

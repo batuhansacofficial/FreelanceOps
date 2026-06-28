@@ -11,7 +11,7 @@ public sealed class AuthFlowTests(CustomWebApplicationFactory factory)
     [Fact]
     public async Task Me_ShouldReturnUnauthorized_WhenTokenIsMissing()
     {
-        var response = await Client.GetAsync("/api/auth/me");
+        var response = await Client.GetAsync("/api/auth/me", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -26,7 +26,7 @@ public sealed class AuthFlowTests(CustomWebApplicationFactory factory)
                 Email = $"user-{Guid.NewGuid():N}@example.com",
                 Password = "Password123!",
                 FullName = "Test User"
-            });
+            }, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -42,8 +42,8 @@ public sealed class AuthFlowTests(CustomWebApplicationFactory factory)
             FullName = "Test User"
         };
 
-        var firstResponse = await Client.PostAsJsonAsync("/api/auth/register", request);
-        var secondResponse = await Client.PostAsJsonAsync("/api/auth/register", request);
+        var firstResponse = await Client.PostAsJsonAsync("/api/auth/register", request, TestContext.Current.CancellationToken);
+        var secondResponse = await Client.PostAsJsonAsync("/api/auth/register", request, TestContext.Current.CancellationToken);
 
         firstResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         secondResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -69,13 +69,13 @@ public sealed class AuthFlowTests(CustomWebApplicationFactory factory)
             new
             {
                 user.RefreshToken
-            });
+            }, TestContext.Current.CancellationToken);
         var reuseResponse = await Client.PostAsJsonAsync(
             "/api/auth/refresh-token",
             new
             {
                 user.RefreshToken
-            });
+            }, TestContext.Current.CancellationToken);
 
         refreshResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         reuseResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
